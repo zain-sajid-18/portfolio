@@ -1,0 +1,1197 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Portfolio of Zain Sajid, Full Stack MERN Developer building scalable web apps, real-time systems, AI-integrated platforms, and React Native products."
+    />
+    <title>Zain Sajid | Full Stack MERN Developer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/three@0.160.1/build/three.min.js"></script>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #08090b;
+        --panel: rgba(18, 22, 27, 0.82);
+        --panel-strong: #11161c;
+        --text: #f3f7fb;
+        --muted: #aab5c0;
+        --soft: #707b86;
+        --line: rgba(255, 255, 255, 0.1);
+        --blue: #74a7ff;
+        --green: #5be0ad;
+        --rose: #ff8c9f;
+        --amber: #ffd166;
+        --radius: 8px;
+        --max: 1180px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background:
+          radial-gradient(circle at 20% 0%, rgba(116, 167, 255, 0.18), transparent 28rem),
+          radial-gradient(circle at 88% 18%, rgba(91, 224, 173, 0.11), transparent 24rem),
+          linear-gradient(180deg, #08090b 0%, #0c1014 48%, #08090b 100%);
+        color: var(--text);
+        font-family: Geist, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        letter-spacing: 0;
+        overflow-x: hidden;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+        background-size: 44px 44px;
+        mask-image: linear-gradient(to bottom, black, transparent 70%);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button,
+      input,
+      textarea {
+        font: inherit;
+      }
+
+      .shell {
+        width: min(var(--max), calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      .nav {
+        position: fixed;
+        z-index: 50;
+        top: 14px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(var(--max), calc(100% - 28px));
+        height: 62px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 14px 0 18px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgba(9, 12, 16, 0.82);
+        backdrop-filter: blur(18px);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 800;
+      }
+
+      .mark {
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        border-radius: 7px;
+        background: linear-gradient(135deg, var(--blue), var(--green));
+        color: #061016;
+        font-weight: 800;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .nav-links a,
+      .ghost-btn,
+      .primary-btn {
+        min-height: 42px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border-radius: 7px;
+        padding: 0 14px;
+        color: var(--muted);
+        border: 1px solid transparent;
+        transition: transform 180ms ease, color 180ms ease, border-color 180ms ease, background 180ms ease;
+      }
+
+      .nav-links a:hover,
+      .ghost-btn:hover {
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.06);
+        border-color: var(--line);
+      }
+
+      .primary-btn {
+        color: #071018;
+        border-color: rgba(255, 255, 255, 0.22);
+        background: linear-gradient(135deg, var(--blue), var(--green));
+        font-weight: 700;
+      }
+
+      .primary-btn:hover,
+      .ghost-btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .mobile-menu {
+        display: none;
+        background: transparent;
+        border: 1px solid var(--line);
+        color: var(--text);
+        border-radius: 7px;
+        width: 42px;
+        height: 42px;
+      }
+
+      .hero {
+        position: relative;
+        min-height: 100svh;
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+        align-items: center;
+        gap: 44px;
+        padding: 112px 0 56px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 18px;
+        color: var(--green);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+        text-transform: uppercase;
+      }
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: currentColor;
+        box-shadow: 0 0 16px currentColor;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        max-width: 740px;
+        font-size: clamp(40px, 5.4vw, 66px);
+        line-height: 0.96;
+        letter-spacing: 0;
+      }
+
+      .gradient-text {
+        background: linear-gradient(135deg, #ffffff, var(--blue) 42%, var(--green));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .lead {
+        margin-top: 22px;
+        max-width: 650px;
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1.7;
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 30px;
+      }
+
+      .hero-metrics {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-top: 34px;
+        max-width: 640px;
+      }
+
+      .metric,
+      .card,
+      .project-card,
+      .contact-panel,
+      .timeline-item {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--panel);
+        backdrop-filter: blur(16px);
+      }
+
+      .metric {
+        padding: 16px;
+      }
+
+      .metric strong {
+        display: block;
+        font-size: 26px;
+      }
+
+      .metric span {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.35;
+      }
+
+      .visual-stage {
+        position: relative;
+        min-height: 560px;
+      }
+
+      #hero-canvas {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .portrait-card {
+        position: absolute;
+        right: 0;
+        bottom: 40px;
+        width: min(390px, 92%);
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+        box-shadow: 0 30px 90px rgba(0, 0, 0, 0.45);
+      }
+
+      .portrait {
+        aspect-ratio: 4 / 5;
+        position: relative;
+        display: grid;
+        place-items: center;
+        background:
+          linear-gradient(135deg, rgba(116, 167, 255, 0.2), transparent),
+          radial-gradient(circle at 50% 22%, rgba(91, 224, 173, 0.28), transparent 34%),
+          #10161c;
+      }
+
+      .avatar-orbit {
+        width: 210px;
+        height: 210px;
+        position: relative;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 50%;
+        animation: float 5.2s ease-in-out infinite;
+      }
+
+      .avatar-orbit::before {
+        content: "ZS";
+        position: absolute;
+        inset: 34px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #dce9ff, #7df1c3);
+        color: #071018;
+        font-size: 54px;
+        font-weight: 800;
+      }
+
+      .avatar-orbit::after {
+        content: "";
+        position: absolute;
+        inset: -18px;
+        border-radius: 50%;
+        border: 1px dashed rgba(255, 255, 255, 0.2);
+        animation: spin 18s linear infinite;
+      }
+
+      .portrait-meta {
+        display: grid;
+        gap: 10px;
+        padding: 18px;
+        background: rgba(8, 11, 15, 0.88);
+      }
+
+      .mini-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .mini-row strong {
+        color: var(--text);
+        min-width: 0;
+        overflow-wrap: anywhere;
+        text-align: right;
+      }
+
+      .section {
+        padding: 86px 0;
+      }
+
+      .section-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 24px;
+        margin-bottom: 28px;
+      }
+
+      .section h2 {
+        font-size: clamp(30px, 4vw, 48px);
+        line-height: 1.05;
+      }
+
+      .section-copy {
+        max-width: 570px;
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      .about-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 18px;
+      }
+
+      .card {
+        padding: 24px;
+      }
+
+      .card h3,
+      .project-card h3,
+      .timeline-item h3 {
+        font-size: 22px;
+        margin-bottom: 12px;
+      }
+
+      .card p,
+      .project-card p,
+      .timeline-item p {
+        color: var(--muted);
+        line-height: 1.62;
+      }
+
+      .skill-cloud {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 36px;
+        padding: 0 12px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        background: rgba(255, 255, 255, 0.045);
+        color: var(--muted);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+      }
+
+      .chip::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--blue);
+      }
+
+      .project-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .project-card {
+        overflow: hidden;
+        transition: transform 220ms ease, border-color 220ms ease;
+      }
+
+      .project-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(116, 167, 255, 0.42);
+      }
+
+      .project-art {
+        height: 230px;
+        position: relative;
+        overflow: hidden;
+        border-bottom: 1px solid var(--line);
+        background: #111820;
+      }
+
+      .project-art img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.78;
+        filter: saturate(1.05) contrast(1.05);
+        transform: scale(1.01);
+        transition: transform 520ms ease, opacity 520ms ease;
+      }
+
+      .project-card:hover img {
+        transform: scale(1.08);
+        opacity: 0.94;
+      }
+
+      .project-art::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(8, 9, 11, 0.82), transparent 58%);
+      }
+
+      .project-body {
+        padding: 22px;
+      }
+
+      .project-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 18px 0 0;
+      }
+
+      .impact-list {
+        display: grid;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .impact-list li {
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .timeline {
+        display: grid;
+        gap: 14px;
+      }
+
+      .timeline-item {
+        padding: 22px;
+        display: grid;
+        grid-template-columns: 170px 1fr;
+        gap: 22px;
+      }
+
+      .timeline-date {
+        color: var(--green);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+      }
+
+      .contact-grid {
+        display: grid;
+        grid-template-columns: 0.92fr 1.08fr;
+        gap: 18px;
+      }
+
+      .contact-panel {
+        padding: 24px;
+      }
+
+      .contact-link {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 18px;
+        padding: 16px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .contact-link:last-child {
+        border-bottom: 0;
+      }
+
+      .contact-link span {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .form {
+        display: grid;
+        gap: 14px;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+      }
+
+      input,
+      textarea {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        background: rgba(255, 255, 255, 0.045);
+        color: var(--text);
+        padding: 13px 14px;
+        outline: none;
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 134px;
+      }
+
+      input:focus,
+      textarea:focus {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3px rgba(116, 167, 255, 0.14);
+      }
+
+      .footer {
+        padding: 28px 0 42px;
+        color: var(--soft);
+        border-top: 1px solid var(--line);
+      }
+
+      .footer .shell {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(18px);
+        transition: opacity 700ms ease, transform 700ms ease;
+      }
+
+      .reveal.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-14px);
+        }
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.001ms !important;
+          animation-iteration-count: 1 !important;
+          scroll-behavior: auto !important;
+          transition-duration: 0.001ms !important;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .nav-links {
+          position: absolute;
+          top: 70px;
+          left: 0;
+          right: 0;
+          display: none;
+          flex-direction: column;
+          align-items: stretch;
+          padding: 12px;
+          border: 1px solid var(--line);
+          border-radius: var(--radius);
+          background: rgba(9, 12, 16, 0.96);
+        }
+
+        .nav-links.open {
+          display: flex;
+        }
+
+        .mobile-menu {
+          display: inline-grid;
+          place-items: center;
+        }
+
+        .hero,
+        .about-grid,
+        .contact-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .hero {
+          padding-top: 104px;
+        }
+
+        .visual-stage {
+          min-height: 470px;
+          order: -1;
+        }
+
+        .portrait-card {
+          left: 50%;
+          right: auto;
+          transform: translateX(-50%);
+        }
+
+        .portrait-card.reveal.is-visible {
+          transform: translateX(-50%);
+        }
+
+        .project-grid,
+        .hero-metrics,
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+
+        .section-head {
+          align-items: start;
+          flex-direction: column;
+        }
+
+        .timeline-item {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 540px) {
+        .shell {
+          width: min(100% - 28px, var(--max));
+        }
+
+        .nav {
+          top: 10px;
+          width: calc(100% - 20px);
+        }
+
+        .brand span:last-child {
+          display: none;
+        }
+
+        .hero-actions a {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      const { useEffect, useRef, useState } = React;
+
+      const skills = [
+        "React.js",
+        "Next.js",
+        "Tailwind CSS",
+        "Node.js",
+        "Express.js",
+        "Nest.js",
+        "MongoDB",
+        "MySQL",
+        "Firebase",
+        "Socket.io",
+        "OpenAI API",
+        "React Native",
+        "JWT Auth",
+        "REST APIs",
+        "Python",
+        "C++",
+        "Java",
+        "System Design",
+      ];
+
+      const projects = [
+        {
+          title: "IntelliBid",
+          category: "AI-powered online auction platform",
+          image:
+            "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1100&q=80",
+          tags: ["MERN", "Socket.io", "OpenAI API", "MongoDB"],
+          points: [
+            "Built real-time bidding with anti-sniping, bid-expiry countdowns, live leaderboards, and consistent concurrent updates.",
+            "Integrated OpenAI for product descriptions, bid-price recommendations, and automated item categorization.",
+            "Designed JWT role access, item CRUD, multi-image upload, checkout flow, and analytics-focused MongoDB schemas.",
+          ],
+        },
+        {
+          title: "Real-Time Chat",
+          category: "Production-grade messaging system",
+          image:
+            "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1100&q=80",
+          tags: ["WebSockets", "JWT", "MongoDB", "Security"],
+          points: [
+            "Delivered live typing, presence detection, read receipts, file sharing, and paginated chat history.",
+            "Implemented bcrypt password hashing, JWT-secured endpoints, and XSS-safe message rendering.",
+          ],
+        },
+        {
+          title: "E-Commerce Platform",
+          category: "Marketplace and admin analytics",
+          image:
+            "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=1100&q=80",
+          tags: ["React", "Node.js", "Indexes", "Admin"],
+          points: [
+            "Created catalog, search, filtering, cart, wishlist, order lifecycle tracking, and role-based admin dashboards.",
+            "Improved API response time by 40% using compound indexes and query optimization.",
+          ],
+        },
+        {
+          title: "Scalable REST API",
+          category: "Layered backend architecture",
+          image:
+            "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1100&q=80",
+          tags: ["Express", "Joi", "Rate Limits", "Postman"],
+          points: [
+            "Engineered routes, controllers, services, models, validation, centralized error handling, and JWT middleware.",
+            "Prepared Postman documentation for faster team onboarding and API handoff.",
+          ],
+        },
+      ];
+
+      const certifications = [
+        "CS50x - Introduction to Computer Science (Harvard/edX)",
+        "Meta Front-End Developer Certificate (Coursera)",
+        "Google Developers Community Member",
+      ];
+
+      function Icon({ children }) {
+        return <span aria-hidden="true">{children}</span>;
+      }
+
+      function HeroCanvas() {
+        const mountRef = useRef(null);
+
+        useEffect(() => {
+          if (!window.THREE || !mountRef.current) return;
+
+          const mount = mountRef.current;
+          const scene = new THREE.Scene();
+          const camera = new THREE.PerspectiveCamera(48, mount.clientWidth / mount.clientHeight, 0.1, 100);
+          camera.position.set(0, 0, 8);
+
+          const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+          renderer.setSize(mount.clientWidth, mount.clientHeight);
+          mount.appendChild(renderer.domElement);
+
+          const group = new THREE.Group();
+          scene.add(group);
+
+          const geometry = new THREE.IcosahedronGeometry(1.8, 2);
+          const material = new THREE.MeshStandardMaterial({
+            color: 0x74a7ff,
+            metalness: 0.55,
+            roughness: 0.22,
+            wireframe: true,
+          });
+          const core = new THREE.Mesh(geometry, material);
+          group.add(core);
+
+          const ringMaterial = new THREE.MeshBasicMaterial({ color: 0x5be0ad, transparent: true, opacity: 0.46 });
+          [2.4, 3.05, 3.65].forEach((radius, index) => {
+            const ring = new THREE.Mesh(new THREE.TorusGeometry(radius, 0.01, 16, 140), ringMaterial);
+            ring.rotation.x = Math.PI / (2.2 + index * 0.22);
+            ring.rotation.y = Math.PI / (3.2 + index * 0.18);
+            group.add(ring);
+          });
+
+          const particles = new THREE.BufferGeometry();
+          const positions = [];
+          for (let i = 0; i < 260; i++) {
+            positions.push((Math.random() - 0.5) * 9, (Math.random() - 0.5) * 7, (Math.random() - 0.5) * 7);
+          }
+          particles.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+          const particleMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.018, transparent: true, opacity: 0.55 });
+          const points = new THREE.Points(particles, particleMaterial);
+          scene.add(points);
+
+          const key = new THREE.PointLight(0x74a7ff, 2.7, 20);
+          key.position.set(4, 3, 5);
+          scene.add(key);
+          const fill = new THREE.PointLight(0x5be0ad, 1.4, 14);
+          fill.position.set(-4, -2, 4);
+          scene.add(fill);
+          scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+
+          let animationFrame;
+          const animate = () => {
+            group.rotation.y += 0.004;
+            group.rotation.x = Math.sin(Date.now() * 0.0006) * 0.18;
+            points.rotation.y -= 0.0015;
+            renderer.render(scene, camera);
+            animationFrame = requestAnimationFrame(animate);
+          };
+          animate();
+
+          const resize = () => {
+            if (!mount.clientWidth || !mount.clientHeight) return;
+            camera.aspect = mount.clientWidth / mount.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(mount.clientWidth, mount.clientHeight);
+          };
+          window.addEventListener("resize", resize);
+
+          return () => {
+            cancelAnimationFrame(animationFrame);
+            window.removeEventListener("resize", resize);
+            renderer.dispose();
+            geometry.dispose();
+            material.dispose();
+            mount.removeChild(renderer.domElement);
+          };
+        }, []);
+
+        return <div id="hero-canvas" ref={mountRef} aria-hidden="true" />;
+      }
+
+      function App() {
+        const [menuOpen, setMenuOpen] = useState(false);
+
+        useEffect(() => {
+          const observer = new IntersectionObserver(
+            entries => {
+              entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add("is-visible");
+              });
+            },
+            { threshold: 0.12 }
+          );
+
+          document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+          return () => observer.disconnect();
+        }, []);
+
+        const handleSubmit = event => {
+          event.preventDefault();
+          const data = new FormData(event.currentTarget);
+          const subject = encodeURIComponent(data.get("subject") || "Portfolio inquiry");
+          const body = encodeURIComponent(
+            `Name: ${data.get("name")}\nEmail: ${data.get("email")}\n\n${data.get("message")}`
+          );
+          window.location.href = `mailto:zainsajid.056@gmail.com?subject=${subject}&body=${body}`;
+        };
+
+        return (
+          <>
+            <nav className="nav" aria-label="Primary navigation">
+              <a className="brand" href="#top" aria-label="Zain Sajid home">
+                <span className="mark">ZS</span>
+                <span>Zain Sajid</span>
+              </a>
+              <button
+                className="mobile-menu"
+                aria-label="Toggle navigation"
+                aria-expanded={menuOpen}
+                onClick={() => setMenuOpen(!menuOpen)}
+              >
+                <Icon>{menuOpen ? "x" : "☰"}</Icon>
+              </button>
+              <div className={`nav-links ${menuOpen ? "open" : ""}`}>
+                {["About", "Skills", "Projects", "Education", "Contact"].map(item => (
+                  <a key={item} href={`#${item.toLowerCase()}`} onClick={() => setMenuOpen(false)}>
+                    {item}
+                  </a>
+                ))}
+                <a className="primary-btn" href="mailto:zainsajid.056@gmail.com">
+                  Hire Me
+                </a>
+              </div>
+            </nav>
+
+            <main id="top">
+              <section className="shell hero">
+                <div className="reveal is-visible">
+                  <div className="eyebrow">
+                    <span className="dot" />
+                    Available for MERN, AI, and real-time web projects
+                  </div>
+                  <h1>
+                    Full Stack MERN Developer building <span className="gradient-text">production-grade</span> web systems.
+                  </h1>
+                  <p className="lead">
+                    Final-year Software Engineering student at UCP, Lahore, focused on scalable REST APIs, responsive React
+                    interfaces, Socket.io systems, AI-integrated platforms, and React Native apps.
+                  </p>
+                  <div className="hero-actions">
+                    <a className="primary-btn" href="#projects">
+                      <Icon>↗</Icon> View Projects
+                    </a>
+                    <a className="ghost-btn" href="mailto:zainsajid.056@gmail.com">
+                      <Icon>✉</Icon> Contact
+                    </a>
+                    {/* Customize this link when you add a downloadable PDF resume to the project folder. */}
+                    <a className="ghost-btn" href="#" aria-label="Resume download placeholder">
+                      <Icon>↓</Icon> Resume
+                    </a>
+                  </div>
+                  <div className="hero-metrics" aria-label="Portfolio highlights">
+                    <div className="metric">
+                      <strong>4+</strong>
+                      <span>Production-style portfolio projects</span>
+                    </div>
+                    <div className="metric">
+                      <strong>&lt;100ms</strong>
+                      <span>Targeted API response performance</span>
+                    </div>
+                    <div className="metric">
+                      <strong>2026</strong>
+                      <span>BS Software Engineering graduation</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="visual-stage" aria-label="3D developer visual">
+                  <HeroCanvas />
+                  <div className="portrait-card reveal is-visible">
+                    <div className="portrait">
+                      <div className="avatar-orbit" />
+                    </div>
+                    <div className="portrait-meta">
+                      <div className="mini-row">
+                        <span>Location</span>
+                        <strong>Lahore, Pakistan</strong>
+                      </div>
+                      <div className="mini-row">
+                        <span>Focus</span>
+                        <strong>MERN + Real-time + AI</strong>
+                      </div>
+                      <div className="mini-row">
+                        <span>Contact</span>
+                        <strong>0308-4042598</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section className="shell section" id="about">
+                <div className="section-head reveal">
+                  <div>
+                    <div className="eyebrow"><span className="dot" /> About</div>
+                    <h2>Clean architecture, practical product thinking, and measurable business impact.</h2>
+                  </div>
+                  <p className="section-copy">
+                    I design and implement web applications from database schema to deployable UI, with attention to
+                    authentication, performance, maintainability, and user experience.
+                  </p>
+                </div>
+                <div className="about-grid">
+                  <article className="card reveal">
+                    <h3>Professional Summary</h3>
+                    <p>
+                      Results-driven Full Stack MERN Developer and final-year Software Engineering student at the University
+                      of Central Punjab, graduating July 2026. Experienced with scalable web applications, REST APIs,
+                      real-time systems, AI integrations, cross-platform mobile development, and responsive React frontends.
+                    </p>
+                  </article>
+                  <article className="card reveal">
+                    <h3>Working Style</h3>
+                    <p>
+                      I favor modular architecture, clear ownership boundaries, optimized data access, and interfaces that
+                      are easy to scan. I like building systems that feel fast, predictable, and maintainable after launch.
+                    </p>
+                    {/* Customize this paragraph with your internship, freelance, or professional experience when available. */}
+                  </article>
+                </div>
+              </section>
+
+              <section className="shell section" id="skills">
+                <div className="section-head reveal">
+                  <div>
+                    <div className="eyebrow"><span className="dot" /> Skills</div>
+                    <h2>Modern full-stack toolkit.</h2>
+                  </div>
+                  <p className="section-copy">
+                    Frontend, backend, mobile, database, real-time, tooling, programming languages, AI integration, and core
+                    software engineering concepts.
+                  </p>
+                </div>
+                <div className="card reveal">
+                  <div className="skill-cloud">
+                    {skills.map(skill => (
+                      <span className="chip" key={skill}>
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </section>
+
+              <section className="shell section" id="projects">
+                <div className="section-head reveal">
+                  <div>
+                    <div className="eyebrow"><span className="dot" /> Projects</div>
+                    <h2>Selected systems and product builds.</h2>
+                  </div>
+                  <p className="section-copy">
+                    Built around real engineering concerns: concurrency, authentication, latency, query optimization, data
+                    modeling, admin workflows, and smooth UI feedback.
+                  </p>
+                </div>
+                <div className="project-grid">
+                  {projects.map(project => (
+                    <article className="project-card reveal" key={project.title}>
+                      <div className="project-art">
+                        <img src={project.image} alt={`${project.title} interface concept`} loading="lazy" />
+                      </div>
+                      <div className="project-body">
+                        <div className="eyebrow"><span className="dot" /> {project.category}</div>
+                        <h3>{project.title}</h3>
+                        <ul className="impact-list">
+                          {project.points.map(point => (
+                            <li key={point}>{point}</li>
+                          ))}
+                        </ul>
+                        <div className="project-tags">
+                          {project.tags.map(tag => (
+                            <span className="chip" key={tag}>{tag}</span>
+                          ))}
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
+
+              <section className="shell section" id="education">
+                <div className="section-head reveal">
+                  <div>
+                    <div className="eyebrow"><span className="dot" /> Education</div>
+                    <h2>Academic foundation and certifications.</h2>
+                  </div>
+                </div>
+                <div className="timeline">
+                  <article className="timeline-item reveal">
+                    <div className="timeline-date">Graduating July 2026</div>
+                    <div>
+                      <h3>BS Software Engineering - University of Central Punjab</h3>
+                      <p>
+                        CGPA 3.21 / 4.0. Relevant coursework includes Data Structures & Algorithms, OOP, Database Systems,
+                        Computer Networks, Web Technologies, and Software Engineering.
+                      </p>
+                    </div>
+                  </article>
+                  <article className="timeline-item reveal">
+                    <div className="timeline-date">Certifications</div>
+                    <div>
+                      <h3>Continuous learning</h3>
+                      <p>{certifications.join(" · ")}</p>
+                      {/* Customize this section with certificate links or verification IDs when you have them. */}
+                    </div>
+                  </article>
+                </div>
+              </section>
+
+              <section className="shell section" id="contact">
+                <div className="section-head reveal">
+                  <div>
+                    <div className="eyebrow"><span className="dot" /> Contact</div>
+                    <h2>Let’s build something useful, fast, and reliable.</h2>
+                  </div>
+                  <p className="section-copy">
+                    Open to roles, internships, freelance builds, collaborations, and MERN product work.
+                  </p>
+                </div>
+                <div className="contact-grid">
+                  <aside className="contact-panel reveal">
+                    <a className="contact-link" href="mailto:zainsajid.056@gmail.com">
+                      <div>
+                        <strong>Email</strong>
+                        <span>zainsajid.056@gmail.com</span>
+                      </div>
+                      <Icon>↗</Icon>
+                    </a>
+                    <a className="contact-link" href="https://linkedin.com/in/zain-sajid12" target="_blank" rel="noreferrer">
+                      <div>
+                        <strong>LinkedIn</strong>
+                        <span>linkedin.com/in/zain-sajid12</span>
+                      </div>
+                      <Icon>↗</Icon>
+                    </a>
+                    <a className="contact-link" href="https://github.com/zain-sajid-18" target="_blank" rel="noreferrer">
+                      <div>
+                        <strong>GitHub</strong>
+                        <span>github.com/zain-sajid-18</span>
+                      </div>
+                      <Icon>↗</Icon>
+                    </a>
+                    <a className="contact-link" href="tel:+923084042598">
+                      <div>
+                        <strong>Phone</strong>
+                        <span>0308-4042598</span>
+                      </div>
+                      <Icon>↗</Icon>
+                    </a>
+                  </aside>
+                  <form className="contact-panel form reveal" onSubmit={handleSubmit}>
+                    <div className="form-row">
+                      <input name="name" type="text" placeholder="Your name" required />
+                      <input name="email" type="email" placeholder="Your email" required />
+                    </div>
+                    <input name="subject" type="text" placeholder="Project or role inquiry" required />
+                    <textarea name="message" placeholder="Tell me what you want to build..." required />
+                    <button className="primary-btn" type="submit">
+                      <Icon>✉</Icon> Send Message
+                    </button>
+                  </form>
+                </div>
+              </section>
+            </main>
+
+            <footer className="footer">
+              <div className="shell">
+                <span>© 2026 Zain Sajid. Built with React and Three.js.</span>
+                <span>Lahore, Pakistan · MERN Developer</span>
+              </div>
+            </footer>
+          </>
+        );
+      }
+
+      ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+    </script>
+  </body>
+</html>
