@@ -1,62 +1,81 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type FormEvent, type ChangeEvent } from 'react';
 import { Mail, Phone, MapPin, Send, Link, FileCode } from 'lucide-react';
 import { personalInfo } from '@/app/_lib/data';
 import { ScrollReveal } from '@/app/_components/ui/scroll-reveal';
 import { SectionHeader } from '@/app/_components/ui/section-header';
+import { MagneticButton } from '@/app/_components/ui/magnetic-button';
 import { formatPhoneForTel } from '@/app/_lib/utils';
 
 export function ContactSection() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    subject: '',
     message: '',
   });
-  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const validate = () => {
+    const next: Record<string, string> = {};
+    if (!formData.name.trim()) next.name = 'Name is required';
+    if (!formData.email.trim()) {
+      next.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      next.email = 'Enter a valid email address';
+    }
+    if (!formData.message.trim()) next.message = 'Message is required';
+    setErrors(next);
+    return Object.keys(next).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) return;
-
-    setStatus('submitting');
-    try {
-      // Simulate form submission
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      setStatus('success');
-      setFormData({ name: '', email: '', message: '' });
-      setTimeout(() => setStatus('idle'), 5000);
-    } catch {
-      setStatus('error');
-      setTimeout(() => setStatus('idle'), 5000);
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors((prev) => {
+        const copy = { ...prev };
+        delete copy[name];
+        return copy;
+      });
     }
+  };
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (!validate()) return;
+
+    const subject = encodeURIComponent(formData.subject || 'Portfolio inquiry');
+    const body = encodeURIComponent(
+      `Name: ${formData.name}\nEmail: ${formData.email}\n\n${formData.message}`
+    );
+
+    window.location.href = `mailto:${personalInfo.email}?subject=${subject}&body=${body}`;
+    setSubmitted(true);
+    setFormData({ name: '', email: '', subject: '', message: '' });
+    setTimeout(() => setSubmitted(false), 4000);
   };
 
   return (
     <section id="contact" className="shell py-24 border-t border-[var(--line)]">
       <SectionHeader
-        eyebrow="08 // INITIATE"
+        eyebrow="07 // INITIATE"
         title="Get in Touch"
         description="Whether you have an opening, a freelance project, or just want to say hi—reach out!"
       />
 
       <div
-        className="grid gap-12 mt-12 items-start"
-        style={{
-          gridTemplateColumns: 'minmax(0, 0.9fr) minmax(0, 1.1fr)',
-        }}
+        className="grid gap-12 mt-12 items-start contact-grid"
+        style={{ gridTemplateColumns: 'minmax(0, 0.9fr) minmax(0, 1.1fr)' }}
       >
-        {/* Left: Contact Info */}
         <ScrollReveal direction="left">
           <div className="grid gap-6">
-            <h3 className="text-2xl font-bold">Let's talk.</h3>
+            <h3 className="text-2xl font-bold">Let&apos;s talk.</h3>
             <p className="text-base leading-relaxed text-[var(--muted)]">
-              I am interested in full-time roles, Capstone discussions, and collaborative projects. Feel free to use the form or reach me via any of the channels below:
+              I am interested in full-time roles, Capstone discussions, and collaborative projects.
+              Feel free to use the form or reach me via any of the channels below:
             </p>
 
             <div className="grid gap-4 mt-4">
@@ -68,9 +87,7 @@ export function ContactSection() {
                   <Mail size={18} />
                 </div>
                 <div>
-                  <span className="block text-xs font-mono text-[var(--soft)] uppercase">
-                    Email
-                  </span>
+                  <span className="block text-xs font-mono text-[var(--soft)] uppercase">Email</span>
                   <strong className="text-sm font-semibold">{personalInfo.email}</strong>
                 </div>
               </a>
@@ -83,9 +100,7 @@ export function ContactSection() {
                   <Phone size={18} />
                 </div>
                 <div>
-                  <span className="block text-xs font-mono text-[var(--soft)] uppercase">
-                    Phone
-                  </span>
+                  <span className="block text-xs font-mono text-[var(--soft)] uppercase">Phone</span>
                   <strong className="text-sm font-semibold">{personalInfo.phone}</strong>
                 </div>
               </a>
@@ -95,15 +110,12 @@ export function ContactSection() {
                   <MapPin size={18} />
                 </div>
                 <div>
-                  <span className="block text-xs font-mono text-[var(--soft)] uppercase">
-                    Location
-                  </span>
+                  <span className="block text-xs font-mono text-[var(--soft)] uppercase">Location</span>
                   <strong className="text-sm font-semibold">{personalInfo.location}</strong>
                 </div>
               </div>
             </div>
 
-            {/* Social Links */}
             <div className="flex gap-3 mt-4">
               <a
                 href={personalInfo.socials.linkedin}
@@ -129,82 +141,65 @@ export function ContactSection() {
           </div>
         </ScrollReveal>
 
-        {/* Right: Contact Form */}
         <ScrollReveal direction="right" delay={0.2}>
-          <form onSubmit={handleSubmit} className="glass-panel p-8 grid gap-5">
-            <div className="grid gap-1.5">
-              <label htmlFor="name" className="text-xs font-mono uppercase text-[var(--muted)]">
-                Your Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                disabled={status === 'submitting'}
-                className="w-full px-4 py-3 rounded border bg-black/10 border-[var(--line)] focus:outline-none focus:border-[var(--accent-blue)] transition-colors text-sm"
-                placeholder="e.g. John Doe"
-              />
-            </div>
-
-            <div className="grid gap-1.5">
-              <label htmlFor="email" className="text-xs font-mono uppercase text-[var(--muted)]">
-                Email Address
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                disabled={status === 'submitting'}
-                className="w-full px-4 py-3 rounded border bg-black/10 border-[var(--line)] focus:outline-none focus:border-[var(--accent-blue)] transition-colors text-sm"
-                placeholder="john@example.com"
-              />
-            </div>
+          <form onSubmit={handleSubmit} className="glass-panel p-8 grid gap-5" noValidate>
+            {(['name', 'email', 'subject'] as const).map((field) => (
+              <div key={field} className="grid gap-1.5">
+                <label htmlFor={field} className="text-xs font-mono uppercase text-[var(--muted)]">
+                  {field === 'name' ? 'Your Name' : field === 'email' ? 'Email Address' : 'Subject'}
+                </label>
+                <input
+                  type={field === 'email' ? 'email' : 'text'}
+                  id={field}
+                  name={field}
+                  value={formData[field]}
+                  onChange={handleChange}
+                  className={errors[field] ? 'border-[var(--accent-rose)]' : ''}
+          
+                  aria-invalid={!!errors[field]}
+                  aria-describedby={errors[field] ? `${field}-error` : undefined}
+                />
+                {errors[field] && (
+                  <span id={`${field}-error`} className="text-xs text-[var(--accent-rose)]">
+                    {errors[field]}
+                  </span>
+                )}
+              </div>
+            ))}
 
             <div className="grid gap-1.5">
               <label htmlFor="message" className="text-xs font-mono uppercase text-[var(--muted)]">
-                Message Description
+                Message
               </label>
               <textarea
                 id="message"
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
-                required
-                disabled={status === 'submitting'}
                 rows={5}
-                className="w-full px-4 py-3 rounded border bg-black/10 border-[var(--line)] focus:outline-none focus:border-[var(--accent-blue)] transition-colors text-sm resize-none"
+                className={errors.message ? 'border-[var(--accent-rose)]' : ''}
                 placeholder="Describe your project, timeline, or job scope..."
+                aria-invalid={!!errors.message}
+                aria-describedby={errors.message ? 'message-error' : undefined}
               />
+              {errors.message && (
+                <span id="message-error" className="text-xs text-[var(--accent-rose)]">
+                  {errors.message}
+                </span>
+              )}
             </div>
 
-            <button
-              type="submit"
-              disabled={status === 'submitting'}
-              className="btn-primary w-full mt-2"
-              style={{ minHeight: 46 }}
-            >
-              {status === 'idle' && (
-                <>
-                  <Send size={16} /> Send Message
-                </>
-              )}
-              {status === 'submitting' && 'Sending payload...'}
-              {status === 'success' && 'Payload received successfully!'}
-              {status === 'error' && 'Failed to send payload.'}
-            </button>
+            <MagneticButton type="submit" className="btn-primary w-full mt-2 min-h-[46px]">
+              <Send size={16} />
+              {submitted ? 'Opening your email client…' : 'Send Message'}
+            </MagneticButton>
           </form>
         </ScrollReveal>
       </div>
 
-      <style jsx>{`
+      <style jsx global>{`
         @media (max-width: 900px) {
-          div {
+          .contact-grid {
             grid-template-columns: 1fr !important;
           }
         }

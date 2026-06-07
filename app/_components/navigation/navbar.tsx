@@ -2,153 +2,139 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Sun, Moon } from 'lucide-react';
+import { Menu, X, Sun, Moon, ArrowUpRight } from 'lucide-react';
 import { useTheme } from '@/app/_components/providers/theme-provider';
 import { navLinks, personalInfo } from '@/app/_lib/data';
+import { cn } from '@/app/_lib/utils';
 
-export function Navbar() {
+interface NavbarProps {
+  introComplete?: boolean;
+}
+
+export function Navbar({ introComplete = true }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState('hero');
   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 24);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close menu on resize
+  useEffect(() => {
+    if (!introComplete) return;
+    const sectionIds = ['hero', ...navLinks.map((l) => l.href.replace('#', ''))];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveSection(entry.target.id);
+        });
+      },
+      { rootMargin: '-42% 0px -52% 0px', threshold: 0 }
+    );
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, [introComplete]);
+
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth > 900) setMenuOpen(false);
+      if (window.innerWidth > 1024) setMenuOpen(false);
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   return (
-    <motion.nav
-      className="fixed z-50 left-1/2 -translate-x-1/2"
-      style={{
-        top: 14,
-        width: 'min(var(--max-width), calc(100% - 28px))',
-        height: 62,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 14px 0 18px',
-        border: '1px solid var(--line)',
-        borderRadius: 'var(--radius)',
-        background: 'var(--nav-bg)',
-        backdropFilter: 'blur(18px)',
-        WebkitBackdropFilter: 'blur(18px)',
-      }}
-      initial={{ y: -80, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-      aria-label="Primary navigation"
-    >
-      {/* Brand */}
-      <a
-        href="#hero"
-        className="flex items-center gap-2.5 font-extrabold no-underline"
-        aria-label={`${personalInfo.name} home`}
-        onClick={() => setMenuOpen(false)}
+    <header className="fixed top-0 inset-x-0 z-50 px-4 pt-5 pointer-events-none">
+      <motion.div
+        className="shell navbar-shell pointer-events-auto"
+        initial={{ y: -70, opacity: 0 }}
+        animate={introComplete ? { y: 0, opacity: 1 } : { y: -70, opacity: 0 }}
+        transition={{ duration: 0.75, delay: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
       >
-        <span
-          className="grid place-items-center text-sm font-extrabold"
-          style={{
-            width: 34,
-            height: 34,
-            borderRadius: 7,
-            background: 'linear-gradient(135deg, var(--accent-blue), var(--accent-green))',
-            color: '#061016',
-          }}
-        >
-          {personalInfo.initials}
-        </span>
-        <span className="hidden sm:inline">{personalInfo.name}</span>
-      </a>
-
-      {/* Desktop Links */}
-      <div className="hidden lg:flex items-center gap-1.5">
-        {navLinks.map((link) => (
-          <a
-            key={link.href}
-            href={link.href}
-            className="btn-ghost text-sm"
-            style={{ minHeight: 38, padding: '0 12px' }}
-          >
-            {link.label}
-          </a>
-        ))}
-
-        {/* Theme Toggle */}
-        <button
-          onClick={toggleTheme}
-          className="btn-ghost"
-          style={{ minHeight: 38, width: 38, padding: 0 }}
-          aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-        >
-          {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
-        </button>
-
-        {/* CTA */}
-        <a
-          href={`mailto:${personalInfo.email}`}
-          className="btn-primary text-sm ml-1"
-          style={{ minHeight: 38 }}
-        >
-          Hire Me
+        {/* Brand */}
+        <a href="#hero" className="navbar-brand" aria-label={`${personalInfo.name} home`}>
+          <span className="navbar-mark">{personalInfo.initials}</span>
+          <span className="hidden sm:flex flex-col leading-tight">
+            <span className="text-sm font-bold text-[var(--foreground)]">{personalInfo.firstName}</span>
+            <span className="text-[10px] font-mono text-[var(--soft)] uppercase tracking-widest">
+              {personalInfo.lastName}
+            </span>
+          </span>
         </a>
-      </div>
 
-      {/* Mobile Controls */}
-      <div className="flex lg:hidden items-center gap-2">
-        <button
-          onClick={toggleTheme}
-          className="btn-ghost"
-          style={{ minHeight: 38, width: 38, padding: 0 }}
-          aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+        {/* Desktop dock */}
+        <nav
+          className={cn('navbar-dock hidden lg:flex', scrolled && 'navbar-dock--scrolled')}
+          aria-label="Primary navigation"
         >
-          {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
-        </button>
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="btn-ghost"
-          style={{ minHeight: 42, width: 42, padding: 0 }}
-          aria-label="Toggle navigation"
-          aria-expanded={menuOpen}
-        >
-          {menuOpen ? <X size={18} /> : <Menu size={18} />}
-        </button>
-      </div>
+          {navLinks.map((link, i) => {
+            const id = link.href.replace('#', '');
+            const isActive = activeSection === id;
+            return (
+              <a
+                key={link.href}
+                href={link.href}
+                className={cn('navbar-link', isActive && 'navbar-link--active')}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                <span>{link.label}</span>
+                {isActive && (
+                  <motion.span
+                    layoutId="navbar-glow"
+                    className="navbar-link-glow"
+                    transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+                  />
+                )}
+              </a>
+            );
+          })}
+        </nav>
 
-      {/* Mobile Menu */}
+        {/* Actions */}
+        <div className="flex items-center gap-2 justify-self-end">
+          <button
+            onClick={toggleTheme}
+            className="navbar-icon-btn"
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+          >
+            {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
+          </button>
+
+          <a href={`mailto:${personalInfo.email}`} className="navbar-cta hidden sm:inline-flex">
+            Hire Me <ArrowUpRight size={14} />
+          </a>
+
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="navbar-icon-btn lg:hidden"
+            aria-label="Toggle navigation"
+            aria-expanded={menuOpen}
+          >
+            {menuOpen ? <X size={18} /> : <Menu size={18} />}
+          </button>
+        </div>
+      </motion.div>
+
       <AnimatePresence>
         {menuOpen && (
-          <motion.div
-            className="absolute left-0 right-0 flex flex-col p-3 lg:hidden"
-            style={{
-              top: 70,
-              border: '1px solid var(--line)',
-              borderRadius: 'var(--radius)',
-              background: 'var(--nav-bg)',
-              backdropFilter: 'blur(18px)',
-              WebkitBackdropFilter: 'blur(18px)',
-            }}
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
+          <motion.nav
+            className="shell mt-3 navbar-mobile pointer-events-auto"
+            initial={{ opacity: 0, y: -10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.98 }}
+            aria-label="Mobile navigation"
           >
             {navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="btn-ghost w-full justify-start"
+                className="navbar-mobile-link"
                 onClick={() => setMenuOpen(false)}
               >
                 {link.label}
@@ -156,14 +142,14 @@ export function Navbar() {
             ))}
             <a
               href={`mailto:${personalInfo.email}`}
-              className="btn-primary w-full mt-2"
+              className="navbar-cta w-full justify-center mt-2"
               onClick={() => setMenuOpen(false)}
             >
-              Hire Me
+              Hire Me <ArrowUpRight size={14} />
             </a>
-          </motion.div>
+          </motion.nav>
         )}
       </AnimatePresence>
-    </motion.nav>
+    </header>
   );
 }

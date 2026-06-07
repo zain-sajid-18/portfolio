@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowUp, Heart } from 'lucide-react';
+import { ArrowUp, Link, FileCode, Mail } from 'lucide-react';
 import { personalInfo } from '@/app/_lib/data';
 
 export function Footer() {
@@ -9,27 +9,43 @@ export function Footer() {
   };
 
   return (
-    <footer className="border-t border-[var(--line)] bg-black/30 py-12">
-      <div className="shell flex flex-col md:flex-row items-center justify-between gap-6">
-        {/* Left: Branding & Copyright */}
-        <div className="text-center md:text-left">
-          <p className="text-sm font-semibold flex items-center justify-center md:justify-start gap-1">
-            © {new Date().getFullYear()} {personalInfo.name}. All rights reserved.
-          </p>
-          <p className="text-xs text-[var(--soft)] mt-1.5">
-            Designed & Engineered with{' '}
-            <Heart size={10} className="inline text-[var(--accent-rose)] fill-current" /> by Zain
-          </p>
+    <footer className="border-t border-[var(--line)] bg-[var(--footer-bg)] py-10 relative z-[1]">
+      <div className="shell flex flex-col sm:flex-row items-center justify-between gap-6">
+        <p className="text-sm font-semibold text-[var(--foreground)]">
+          © {new Date().getFullYear()} {personalInfo.name}
+        </p>
+
+        <div className="flex items-center gap-2">
+          <a
+            href={personalInfo.socials.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-ghost"
+            style={{ width: 38, minHeight: 38, padding: 0 }}
+            aria-label="LinkedIn"
+          >
+            <Link size={16} />
+          </a>
+          <a
+            href={personalInfo.socials.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-ghost"
+            style={{ width: 38, minHeight: 38, padding: 0 }}
+            aria-label="GitHub"
+          >
+            <FileCode size={16} />
+          </a>
+          <a
+            href={`mailto:${personalInfo.email}`}
+            className="btn-ghost"
+            style={{ width: 38, minHeight: 38, padding: 0 }}
+            aria-label="Email"
+          >
+            <Mail size={16} />
+          </a>
         </div>
 
-        {/* Center: Tech stack reference */}
-        <div className="text-xs font-mono text-[var(--soft)] text-center">
-          Built with <span className="text-[var(--accent-blue)]">Next.js 16</span> +{' '}
-          <span className="text-[var(--accent-green)]">Tailwind v4</span> +{' '}
-          <span className="text-[var(--accent-rose)]">Three.js</span>
-        </div>
-
-        {/* Right: Scroll to top */}
         <button
           onClick={handleScrollTop}
           className="btn-ghost"
