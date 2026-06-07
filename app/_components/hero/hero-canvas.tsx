@@ -78,8 +78,8 @@ function StaticGlobe() {
 }
 
 function getCanvasMode() {
-  if (typeof window === 'undefined') return { reduced: true, mobile: true };
-  return { reduced: prefersReducedMotion(), mobile: window.innerWidth < 768 };
+  if (typeof window === 'undefined') return { reduced: true, mobile: false };
+  return { reduced: prefersReducedMotion(), mobile: false };
 }
 
 export function HeroCanvas() {

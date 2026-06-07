@@ -139,7 +139,7 @@ export function IntroSequence({ onComplete }: IntroSequenceProps) {
           {phase >= 1 && phase < 2 && (
             <motion.h1
               key="vision"
-              className="text-5xl md:text-8xl font-bold tracking-tight text-[#f3f7fb]"
+              className="text-4xl md:text-8xl font-bold tracking-tight text-[#f3f7fb]"
               exit={{ opacity: 0, scale: 1.05, filter: 'blur(12px)' }}
               transition={{ duration: 0.5 }}
             >
@@ -150,7 +150,7 @@ export function IntroSequence({ onComplete }: IntroSequenceProps) {
           {phase >= 2 && phase < 3 && (
             <motion.h1
               key="reality"
-              className="text-5xl md:text-8xl font-bold tracking-tight text-[#f3f7fb]"
+              className="text-4xl md:text-8xl font-bold tracking-tight text-[#f3f7fb]"
               exit={{ opacity: 0, scale: 1.05, filter: 'blur(12px)' }}
               transition={{ duration: 0.5 }}
             >
@@ -165,9 +165,9 @@ export function IntroSequence({ onComplete }: IntroSequenceProps) {
               transition={{ duration: 0.5 }}
             >
               <motion.p
-                className="text-lg md:text-2xl font-light tracking-[0.35em] text-[var(--muted)] mb-8 font-mono"
+                className="text-sm md:text-2xl font-light tracking-widest md:tracking-[0.35em] text-[var(--muted)] mb-8 font-mono"
                 initial={{ opacity: 0, letterSpacing: '0.1em' }}
-                animate={{ opacity: 1, letterSpacing: '0.35em' }}
+                animate={{ opacity: 1, letterSpacing: typeof window !== 'undefined' && window.innerWidth < 768 ? '0.15em' : '0.35em' }}
                 transition={{ duration: 0.8 }}
               >
                 JUST ONE LINE AT A TIME
