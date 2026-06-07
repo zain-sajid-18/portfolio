@@ -192,6 +192,7 @@ export function AboutSection() {
             'location metric4 metric4 metric4';
         }
         .bento-card {
+          min-width: 0;
           border: 1px solid var(--line);
           border-radius: 12px;
           background: var(--panel);

@@ -41,12 +41,12 @@ export function HeroSection() {
       className="shell relative min-h-[100svh] grid items-center gap-10 lg:gap-16 pt-28 pb-16 hero-grid"
     >
       <motion.div
-        className="relative min-h-[420px] lg:min-h-[580px] order-1 lg:order-none"
+        className="relative min-h-[300px] md:min-h-[420px] lg:min-h-[580px] order-1 lg:order-none w-full"
         initial={{ opacity: 0, scale: 0.92 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1, ease: [0.25, 0.1, 0.25, 1] }}
       >
-        <div className="hero-globe-stage absolute inset-0 min-h-[420px] lg:min-h-[580px]">
+        <div className="hero-globe-stage absolute inset-0 min-h-[300px] md:min-h-[420px] lg:min-h-[580px]">
           <HeroCanvas />
           <div className="hero-globe-vignette" />
         </div>
