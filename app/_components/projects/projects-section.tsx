@@ -1,219 +1,225 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, type MouseEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FileCode, ExternalLink, ArrowRight } from 'lucide-react';
 import { projects } from '@/app/_lib/data';
 import { ScrollReveal } from '@/app/_components/ui/scroll-reveal';
-import { SectionHeader } from '@/app/_components/ui/section-header';
+
+const PALETTES = [
+  ['#74a7ff', '#5be0ad'],
+  ['#5be0ad', '#ffd166'],
+  ['#ff8c9f', '#74a7ff'],
+  ['#ffd166', '#5be0ad'],
+];
+
+function ProjectVisual({ index, large }: { index: number; large?: boolean }) {
+  const [a, b] = PALETTES[index % PALETTES.length];
+  return (
+    <div
+      className={`project-visual relative overflow-hidden flex items-end ${large ? 'min-h-[280px]' : 'aspect-[16/10]'}`}
+      style={{
+        background: `linear-gradient(145deg, ${a}28, ${b}18 50%, transparent), radial-gradient(circle at 25% 20%, ${a}40, transparent 55%)`,
+      }}
+    >
+      <span
+        className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-extrabold opacity-[0.12] select-none ${large ? 'text-[120px]' : 'text-7xl'}`}
+        style={{ color: a }}
+        aria-hidden="true"
+      >
+        {String(index + 1).padStart(2, '0')}
+      </span>
+      <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-transparent to-transparent opacity-80" />
+      <div
+        className="absolute inset-0 opacity-30"
+        style={{
+          backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 2px, ${a}15 2px, ${a}15 3px)`,
+        }}
+      />
+    </div>
+  );
+}
+
+function ProjectCard({
+  project,
+  index,
+  featured,
+  onOpen,
+}: {
+  project: (typeof projects)[0];
+  index: number;
+  featured?: boolean;
+  onOpen: () => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+
+  const onMove = (e: MouseEvent) => {
+    if (!ref.current || featured) return;
+    const r = ref.current.getBoundingClientRect();
+    setTilt({
+      x: (e.clientY - r.top - r.height / 2) / 22,
+      y: -(e.clientX - r.left - r.width / 2) / 22,
+    });
+  };
+
+  return (
+    <motion.article
+      ref={ref}
+      layout
+      onMouseMove={onMove}
+      onMouseLeave={() => setTilt({ x: 0, y: 0 })}
+      onClick={onOpen}
+      animate={{ rotateX: tilt.x, rotateY: tilt.y }}
+      transition={{ type: 'spring', stiffness: 280, damping: 22 }}
+      style={{ transformStyle: 'preserve-3d' }}
+      className={`project-card group cursor-pointer ${featured ? 'project-card--featured' : ''}`}
+      data-cursor="pointer"
+    >
+      <div className="project-card-inner">
+        <span className="project-index">{String(index + 1).padStart(2, '0')}</span>
+        <ProjectVisual index={index} large={featured} />
+        <div className="project-card-body">
+          <span className="project-category">{project.category}</span>
+          <h3 className="project-title">{project.title}</h3>
+          <p className="project-desc">{project.description}</p>
+          <div className="project-tags">
+            {project.tags.slice(0, featured ? 5 : 3).map((tag) => (
+              <span key={tag} className="project-tag">
+                {tag}
+              </span>
+            ))}
+          </div>
+          <span className="project-cta">
+            View case study <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+          </span>
+        </div>
+      </div>
+    </motion.article>
+  );
+}
 
 export function ProjectsSection() {
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
+  const [featured, ...rest] = projects;
 
   return (
     <section id="projects" className="shell py-24 border-t border-[var(--line)]">
-      <SectionHeader
-        eyebrow="03 // CREATIONS"
-        title="Production Portfolio"
-        description="A curation of systems demonstrating real-time concurrency, AI integration, and layered backend engineering."
-      />
+      <ScrollReveal direction="up">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <div>
+            <p className="eyebrow mb-3">
+              <span className="dot" />
+              03 // Creations
+            </p>
+            <h2 className="text-[clamp(30px,4vw,48px)] font-extrabold leading-tight">
+              Project <span className="gradient-text">Galaxy</span>
+            </h2>
+          </div>
+          <p className="text-sm text-[var(--muted)] max-w-md leading-relaxed font-mono">
+            Select a system to explore architecture, engineering wins, and tech stack.
+          </p>
+        </div>
+      </ScrollReveal>
 
-      {/* Grid of Projects */}
-      <div className="grid gap-6 mt-12 sm:grid-cols-2">
-        {projects.map((project) => (
-          <ScrollReveal key={project.id} direction="up" delay={0.1}>
-            <div
-              className="glass-panel overflow-hidden flex flex-col h-full group cursor-pointer transition-all duration-300 hover:border-[var(--accent-blue)]"
-              onClick={() => setSelectedProject(project.id)}
-              style={{
-                boxShadow: '0 4px 30px rgba(0, 0, 0, 0.2)',
-              }}
-            >
-              {/* Image with overlay */}
-              <div className="relative aspect-video overflow-hidden">
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] to-transparent opacity-80" />
-                <span className="absolute top-4 left-4 text-xs font-mono px-2.5 py-1 rounded-md bg-[var(--background)] border border-[var(--line)] text-[var(--accent-green)]">
-                  {project.category}
-                </span>
-              </div>
-
-              {/* Text info */}
-              <div className="p-6 flex flex-col justify-between flex-1 gap-6">
-                <div>
-                  <h3 className="text-xl font-bold group-hover:text-[var(--accent-blue)] transition-colors">
-                    {project.title}
-                  </h3>
-                  <p className="text-sm text-[var(--muted)] mt-2 leading-relaxed line-clamp-3">
-                    {project.description}
-                  </p>
-                </div>
-
-                {/* Tech tags footer */}
-                <div>
-                  <div className="flex flex-wrap gap-1.5 mb-4">
-                    {project.tags.slice(0, 4).map((tag) => (
-                      <span
-                        key={tag}
-                        className="text-xs font-mono px-2 py-0.5 rounded bg-white/[0.04] text-[var(--soft)]"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                    {project.tags.length > 4 && (
-                      <span className="text-xs font-mono px-2 py-0.5 rounded bg-white/[0.04] text-[var(--soft)]">
-                        +{project.tags.length - 4} more
-                      </span>
-                    )}
-                  </div>
-
-                  <span className="inline-flex items-center gap-1 text-xs font-mono text-[var(--accent-blue)] group-hover:gap-2 transition-all">
-                    Explore Details <ArrowRight size={12} />
-                  </span>
-                </div>
-              </div>
-            </div>
+      <div className="projects-bento">
+        {featured && (
+          <ScrollReveal direction="up" className="project-bento-featured">
+            <ProjectCard
+              project={featured}
+              index={0}
+              featured
+              onOpen={() => setSelectedProject(featured.id)}
+            />
           </ScrollReveal>
-        ))}
+        )}
+        <div className="project-bento-grid">
+          {rest.map((project, i) => (
+            <ScrollReveal key={project.id} direction="up" delay={i * 0.08}>
+              <ProjectCard
+                project={project}
+                index={i + 1}
+                onOpen={() => setSelectedProject(project.id)}
+              />
+            </ScrollReveal>
+          ))}
+        </div>
       </div>
 
-      {/* Project Details Modal */}
       <AnimatePresence>
         {selectedProject && (() => {
           const project = projects.find((p) => p.id === selectedProject);
           if (!project) return null;
+          const idx = projects.findIndex((p) => p.id === project.id);
 
           return (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-              {/* Backdrop */}
               <motion.div
-                className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                className="absolute inset-0 bg-[var(--background)]/80 backdrop-blur-xl"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setSelectedProject(null)}
               />
-
-              {/* Modal Body */}
               <motion.div
                 className="relative glass-panel w-full max-w-2xl max-h-[88vh] overflow-y-auto z-10"
-                initial={{ opacity: 0, scale: 0.96, y: 15 }}
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.96, y: 15 }}
-                transition={{ type: 'spring', damping: 25, stiffness: 350 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                transition={{ type: 'spring', damping: 28, stiffness: 320 }}
               >
-                {/* Close Button */}
                 <button
                   onClick={() => setSelectedProject(null)}
-                  className="absolute top-4 right-4 z-20 w-8 h-8 rounded-full grid place-items-center bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
-                  aria-label="Close details"
+                  className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full grid place-items-center border border-[var(--line)] bg-[var(--surface-subtle)] hover:border-[var(--accent-blue)] transition-colors"
+                  aria-label="Close"
                 >
                   ✕
                 </button>
-
-                {/* Banner image */}
-                <div className="relative aspect-video w-full overflow-hidden">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] to-transparent" />
-                  <div className="absolute bottom-6 left-6 right-6">
+                <ProjectVisual index={idx} large />
+                <div className="p-6 md:p-8 grid gap-6">
+                  <div>
                     <span className="text-xs font-mono text-[var(--accent-green)] uppercase tracking-wider">
                       {project.category}
                     </span>
-                    <h2 className="text-3xl font-extrabold mt-1 text-white">
-                      {project.title}
-                    </h2>
+                    <h2 className="text-2xl md:text-3xl font-extrabold mt-1">{project.title}</h2>
+                    <p className="text-[var(--muted)] mt-3 leading-relaxed">{project.description}</p>
                   </div>
-                </div>
-
-                {/* Details Content */}
-                <div className="p-6 md:p-8 grid gap-6">
-                  <div>
-                    <h4 className="text-xs font-mono text-[var(--soft)] uppercase tracking-wider mb-2">
-                      // Overview
-                    </h4>
-                    <p className="text-base leading-relaxed text-[var(--muted)]">
-                      {project.description}
-                    </p>
-                  </div>
-
-                  {/* Highlights checklist */}
-                  <div>
-                    <h4 className="text-xs font-mono text-[var(--soft)] uppercase tracking-wider mb-3">
-                      // Engineering Accomplishments
-                    </h4>
-                    <ul className="grid gap-3 pl-0 list-none">
-                      {project.highlights.map((highlight, idx) => (
-                        <li
-                          key={idx}
-                          className="text-sm text-[var(--foreground)] flex items-start gap-3 p-3 rounded-lg border border-[var(--line)] bg-white/[0.02]"
-                        >
-                          <span className="text-[var(--accent-green)] font-mono text-xs mt-0.5">
-                            [0{idx + 1}]
-                          </span>
-                          <span className="leading-relaxed">{highlight}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Challenges info if any */}
-                  {project.challenges && (
-                    <div>
-                      <h4 className="text-xs font-mono text-[var(--soft)] uppercase tracking-wider mb-2">
-                        // Key Challenges Overcome
-                      </h4>
-                      <p className="text-sm leading-relaxed text-[var(--muted)]">
-                        {project.challenges}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Bottom bar */}
-                  <div className="flex flex-wrap justify-between items-center gap-4 pt-4 border-t border-[var(--line)]">
-                    <div className="flex flex-wrap gap-1.5">
-                      {project.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="text-xs font-mono px-2 py-0.5 rounded bg-white/[0.04] text-[var(--soft)]"
-                        >
-                          {tag}
+                  <ul className="grid gap-2 list-none p-0">
+                    {project.highlights.map((h, i) => (
+                      <li
+                        key={i}
+                        className="text-sm p-3 rounded-lg border border-[var(--line)] bg-[var(--surface-subtle)] flex gap-3"
+                      >
+                        <span className="text-[var(--accent-green)] font-mono text-xs shrink-0">
+                          [{String(i + 1).padStart(2, '0')}]
                         </span>
-                      ))}
-                    </div>
-
-                    <div className="flex gap-2">
-                      {project.github && (
-                        <a
-                          href={project.github}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="btn-ghost text-xs"
-                          style={{ minHeight: 36 }}
-                        >
-                          <FileCode size={14} /> Repository
-                        </a>
-                      )}
-                      {project.liveDemo && (
-                        <a
-                          href={project.liveDemo}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="btn-primary text-xs"
-                          style={{ minHeight: 36 }}
-                        >
-                          <ExternalLink size={14} /> Live Demo
-                        </a>
-                      )}
-                    </div>
+                        {h}
+                      </li>
+                    ))}
+                  </ul>
+                  {project.challenges && (
+                    <p className="text-sm text-[var(--muted)] border-l-2 border-[var(--accent-amber)] pl-4">
+                      {project.challenges}
+                    </p>
+                  )}
+                  <div className="flex flex-wrap gap-2 pt-2 border-t border-[var(--line)]">
+                    {project.tags.map((tag) => (
+                      <span key={tag} className="project-tag">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="flex gap-2">
+                    {project.github && (
+                      <a href={project.github} target="_blank" rel="noopener noreferrer" className="btn-ghost text-xs">
+                        <FileCode size={14} /> Repository
+                      </a>
+                    )}
+                    {project.liveDemo && (
+                      <a href={project.liveDemo} target="_blank" rel="noopener noreferrer" className="btn-primary text-xs">
+                        <ExternalLink size={14} /> Live Demo
+                      </a>
+                    )}
                   </div>
                 </div>
               </motion.div>
@@ -221,6 +227,123 @@ export function ProjectsSection() {
           );
         })()}
       </AnimatePresence>
+
+      <style jsx global>{`
+        .projects-bento {
+          display: grid;
+          gap: 16px;
+        }
+        .project-bento-featured {
+          width: 100%;
+        }
+        .project-bento-grid {
+          display: grid;
+          gap: 16px;
+          grid-template-columns: repeat(3, 1fr);
+        }
+        .project-card {
+          height: 100%;
+          border-radius: 16px;
+          padding: 1px;
+          background: linear-gradient(135deg, rgba(116,167,255,0.25), rgba(91,224,173,0.15), transparent);
+          transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .project-card:hover {
+          box-shadow: var(--shadow-elevated);
+        }
+        .project-card--featured {
+          background: linear-gradient(135deg, rgba(116,167,255,0.45), rgba(91,224,173,0.3), rgba(255,209,102,0.15));
+        }
+        .project-card-inner {
+          height: 100%;
+          border-radius: 15px;
+          overflow: hidden;
+          background: var(--panel);
+          display: flex;
+          flex-direction: column;
+          position: relative;
+        }
+        .project-index {
+          position: absolute;
+          top: 14px;
+          right: 16px;
+          z-index: 2;
+          font-family: var(--font-mono);
+          font-size: 11px;
+          color: var(--soft);
+          letter-spacing: 0.1em;
+        }
+        .project-card-body {
+          padding: 1.25rem 1.35rem 1.5rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          flex: 1;
+        }
+        .project-category {
+          font-size: 10px;
+          font-family: var(--font-mono);
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          color: var(--accent-green);
+        }
+        .project-title {
+          font-size: 1.15rem;
+          font-weight: 800;
+          line-height: 1.2;
+          transition: color 0.2s;
+        }
+        .project-card:hover .project-title {
+          color: var(--accent-blue);
+        }
+        .project-card--featured .project-title {
+          font-size: 1.5rem;
+        }
+        .project-desc {
+          font-size: 13px;
+          color: var(--muted);
+          line-height: 1.6;
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          flex: 1;
+        }
+        .project-tags {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+          margin-top: 4px;
+        }
+        .project-tag {
+          font-size: 11px;
+          font-family: var(--font-mono);
+          padding: 3px 8px;
+          border-radius: 6px;
+          border: 1px solid var(--line);
+          background: var(--surface-subtle);
+          color: var(--soft);
+        }
+        .project-cta {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          margin-top: 8px;
+          font-size: 12px;
+          font-family: var(--font-mono);
+          color: var(--accent-blue);
+        }
+        @media (max-width: 1024px) {
+          .project-bento-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+        @media (max-width: 640px) {
+          .project-bento-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+      `}</style>
     </section>
   );
 }

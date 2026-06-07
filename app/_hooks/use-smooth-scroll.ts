@@ -1,12 +1,18 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import Lenis from 'lenis';
+import { prefersReducedMotion } from '@/app/_lib/utils';
 
-export function useSmoothScroll() {
+export function useSmoothScroll(enabled = true) {
+  const lenisRef = useRef<Lenis | null>(null);
+
   useEffect(() => {
-    // Only run on client-side
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || !enabled) return;
+
+    window.scrollTo(0, 0);
+
+    if (prefersReducedMotion()) return;
 
     const lenis = new Lenis({
       duration: 1.2,
@@ -18,38 +24,40 @@ export function useSmoothScroll() {
       touchMultiplier: 2,
     });
 
+    lenisRef.current = lenis;
+    lenis.scrollTo(0, { immediate: true });
+
     let rafId: number;
     function raf(time: number) {
       lenis.raf(time);
       rafId = requestAnimationFrame(raf);
     }
-
     rafId = requestAnimationFrame(raf);
 
-    // Sync scroll with hash changes
-    const handleHashChange = () => {
-      const hash = window.location.hash;
-      if (hash) {
-        const target = document.querySelector(hash);
-        if (target) {
-          lenis.scrollTo(target as HTMLElement, { offset: -80 });
-        }
+    const scrollToTarget = (target: HTMLElement, offset = -88) => {
+      lenis.scrollTo(target, { offset });
+    };
+
+    const handleAnchorClick = (event: MouseEvent) => {
+      const anchor = (event.target as HTMLElement).closest('a[href^="#"]');
+      if (!(anchor instanceof HTMLAnchorElement)) return;
+      const hash = anchor.getAttribute('href');
+      if (!hash || hash === '#') return;
+      const target = document.querySelector(hash);
+      if (target instanceof HTMLElement) {
+        event.preventDefault();
+        scrollToTarget(target);
+        window.history.pushState(null, '', hash);
       }
     };
 
-    window.addEventListener('hashchange', handleHashChange);
-
-    // Also handle initial load with hash
-    if (window.location.hash) {
-      setTimeout(() => {
-        handleHashChange();
-      }, 500);
-    }
+    document.addEventListener('click', handleAnchorClick);
 
     return () => {
       cancelAnimationFrame(rafId);
-      window.removeEventListener('hashchange', handleHashChange);
+      document.removeEventListener('click', handleAnchorClick);
       lenis.destroy();
+      lenisRef.current = null;
     };
-  }, []);
+  }, [enabled]);
 }

@@ -2,132 +2,203 @@
 
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
+import { MapPin, ArrowUpRight, Mail, Download } from 'lucide-react';
 import { personalInfo } from '@/app/_lib/data';
+import { MagneticButton } from '@/app/_components/ui/magnetic-button';
 
 const HeroCanvas = dynamic(
   () => import('./hero-canvas').then((mod) => ({ default: mod.HeroCanvas })),
-  { ssr: false }
+  {
+    ssr: false,
+    loading: () => (
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="w-64 h-64 rounded-full animate-pulse bg-[var(--accent-green)]/5" />
+      </div>
+    ),
+  }
 );
+
+const specializations = [
+  'Full-Stack Development',
+  '3D Web Experiences',
+  'Real-Time Systems',
+  'AI Integration',
+];
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 28 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, delay: 0.15 + i * 0.1, ease: [0.25, 0.1, 0.25, 1] as const },
+  }),
+};
 
 export function HeroSection() {
   return (
     <section
       id="hero"
-      className="shell relative min-h-[100dvh] flex items-center"
+      className="shell relative min-h-[100svh] grid items-center gap-10 lg:gap-16 pt-28 pb-16 hero-grid"
     >
-      <div
-        className="w-full grid items-center gap-12"
-        style={{
-          gridTemplateColumns: 'minmax(0, 1.1fr) minmax(0, 0.9fr)',
-        }}
+      <motion.div
+        className="relative min-h-[420px] lg:min-h-[580px] order-1 lg:order-none"
+        initial={{ opacity: 0, scale: 0.92 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1, ease: [0.25, 0.1, 0.25, 1] }}
       >
-        {/* Left: 3D Earth Globe */}
-        <div className="relative h-[500px]">
+        <div className="hero-globe-stage absolute inset-0 min-h-[420px] lg:min-h-[580px]">
           <HeroCanvas />
+          <div className="hero-globe-vignette" />
         </div>
+      </motion.div>
 
-        {/* Right: Your Info */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+      <div className="order-2 lg:order-none flex flex-col justify-center">
+        <motion.p
+          className="text-sm text-[var(--muted)] mb-2"
+          custom={0}
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
         >
-          <p className="text-sm font-mono text-[var(--muted)] mb-2">Hello, I'm</p>
-          <h1
-            className="text-5xl md:text-6xl font-extrabold mb-4"
-            style={{ color: 'var(--foreground)' }}
-          >
-            {personalInfo.name}
+          Hello, I&apos;m
+        </motion.p>
+
+        <motion.div custom={1} initial="hidden" animate="visible" variants={fadeUp}>
+          <h1 className="text-[clamp(38px,5.5vw,68px)] font-extrabold leading-[1.05] tracking-tight">
+            <span className="gradient-text">{personalInfo.name}</span>
           </h1>
-          <p className="text-sm font-mono text-[var(--accent-blue)] mb-6 flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-green)]"></span>
-            @ {personalInfo.location}
-          </p>
-          <p
-            className="text-base leading-relaxed mb-8"
-            style={{ color: 'var(--muted)', maxWidth: '480px' }}
+          <p className="text-base text-[var(--muted)] mt-2 font-mono">{personalInfo.title}</p>
+          <div
+            className="h-[2px] mt-4 mb-5 max-w-[320px]"
+            style={{
+              background: 'linear-gradient(90deg, var(--accent-green), var(--accent-blue), transparent)',
+            }}
+          />
+        </motion.div>
+
+        <motion.div
+          className="flex items-center gap-2 text-sm text-[var(--muted)] mb-6"
+          custom={2}
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+        >
+          <MapPin size={14} className="text-[var(--accent-green)] shrink-0" />
+          <span>{personalInfo.location}</span>
+        </motion.div>
+
+        <motion.p
+          className="text-base lg:text-lg leading-[1.75] text-[var(--muted)] max-w-[520px] mb-8"
+          custom={3}
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+        >
+          {personalInfo.subheading}
+        </motion.p>
+
+        <motion.div custom={4} initial="hidden" animate="visible" variants={fadeUp}>
+          <p className="text-sm font-semibold mb-3">Specialized in:</p>
+          <div className="flex flex-wrap gap-2 mb-8">
+            {specializations.map((tag) => (
+              <span key={tag} className="spec-pill">
+                {tag}
+              </span>
+            ))}
+          </div>
+        </motion.div>
+
+        <motion.div
+          className="flex flex-wrap gap-3 mb-8"
+          custom={5}
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+        >
+          <MagneticButton as="a" href="#projects" className="btn-primary">
+            <ArrowUpRight size={16} /> View Projects
+          </MagneticButton>
+          <MagneticButton as="a" href={`mailto:${personalInfo.email}`} className="btn-ghost">
+            <Mail size={16} /> Contact
+          </MagneticButton>
+          <MagneticButton
+            as="a"
+            href={personalInfo.resumePath}
+            download
+            className="btn-ghost"
+            aria-label="Download resume PDF"
           >
-            {personalInfo.subheading}
-          </p>
+            <Download size={16} /> Resume
+          </MagneticButton>
+        </motion.div>
 
-          <div className="mb-8">
-            <h3 className="text-sm font-semibold mb-3" style={{ color: 'var(--foreground)' }}>
-              Specialized in:
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {[
-                'Full-Stack Development',
-                '3D Web Experiences',
-                'Real-Time Systems',
-                'AI Integration'
-              ].map((tag, idx) => (
-                <span
-                  key={idx}
-                  className="px-3 py-1 rounded-full text-xs font-mono"
-                  style={{
-                    border: '1px solid var(--line)',
-                    background: 'rgba(255,255,255,0.04)',
-                    color: 'var(--muted)'
-                  }}
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex gap-3">
-            {personalInfo.socials.linkedin && (
-              <a
-                href={personalInfo.socials.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full flex items-center justify-center transition-all"
-                style={{
-                  border: '1px solid var(--line)',
-                  background: 'rgba(255,255,255,0.04)'
-                }}
-              >
-                <span className="text-sm">in</span>
-              </a>
-            )}
-            {personalInfo.socials.github && (
-              <a
-                href={personalInfo.socials.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full flex items-center justify-center transition-all"
-                style={{
-                  border: '1px solid var(--line)',
-                  background: 'rgba(255,255,255,0.04)'
-                }}
-              >
-                <span className="text-sm">GH</span>
-              </a>
-            )}
-            <a
-              href={`mailto:${personalInfo.email}`}
-              className="w-10 h-10 rounded-full flex items-center justify-center transition-all"
-              style={{
-                border: '1px solid var(--line)',
-                background: 'rgba(255,255,255,0.04)'
-              }}
-            >
-              <span className="text-sm">@</span>
-            </a>
-          </div>
+        <motion.div
+          className="flex items-center gap-3"
+          custom={6}
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+        >
+          <a
+            href={personalInfo.socials.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="social-link"
+            aria-label="GitHub profile"
+          >
+            GitHub
+          </a>
+          <a
+            href={personalInfo.socials.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="social-link"
+            aria-label="LinkedIn profile"
+          >
+            LinkedIn
+          </a>
+          <a href={`mailto:${personalInfo.email}`} className="social-link" aria-label="Email">
+            Email
+          </a>
         </motion.div>
       </div>
 
-      {/* Responsive styles */}
       <style jsx global>{`
+        .hero-grid {
+          grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+        }
+        .spec-pill {
+          padding: 0.4rem 0.9rem;
+          border-radius: 999px;
+          font-size: 12px;
+          font-family: var(--font-mono);
+          border: 1px solid var(--line);
+          background: var(--surface-subtle);
+          color: var(--muted);
+          transition: border-color 0.2s, color 0.2s;
+        }
+        .spec-pill:hover {
+          border-color: var(--accent-green);
+          color: var(--foreground);
+        }
+        .social-link {
+          padding: 0.5rem 1rem;
+          border-radius: 999px;
+          border: 1px solid var(--line);
+          background: var(--surface-subtle);
+          color: var(--muted);
+          font-size: 12px;
+          font-weight: 600;
+          transition: border-color 0.2s, color 0.2s, transform 0.2s;
+        }
+        .social-link:hover {
+          border-color: var(--accent-blue);
+          color: var(--foreground);
+          transform: translateY(-2px);
+        }
         @media (max-width: 900px) {
-          #hero > div {
+          .hero-grid {
             grid-template-columns: 1fr !important;
-          }
-          #hero > div > div:first-child {
-            order: -1;
-            height: 350px !important;
           }
         }
       `}</style>
