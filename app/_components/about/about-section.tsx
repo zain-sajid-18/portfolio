@@ -170,7 +170,7 @@ export function AboutSection() {
                 <AnimatedCounter
                   value={counter.numericValue}
                   suffix={counter.suffix}
-                  decimals={counter.numericValue === 3.21 ? 2 : 0}
+                  decimals={counter.numericValue === 3.28 ? 2 : 0}
                 />
               ) : (
                 counter.value

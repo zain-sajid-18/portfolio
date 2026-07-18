@@ -101,12 +101,12 @@ export const personalInfo: PersonalInfo = {
   tagline: 'Available for MERN, AI, and real-time web projects',
   headline: 'Building Scalable Digital Experiences',
   subheading:
-    'Final-year Software Engineering student at UCP, Lahore. Specializing in scalable REST APIs, real-time Socket.io systems, AI-integrated platforms, and cross-platform React Native apps.',
+    'Software Engineering graduate from UCP, Lahore. Specializing in scalable REST APIs, real-time Socket.io systems, AI-integrated platforms, and cross-platform React Native apps.',
   email: 'zainsajid.056@gmail.com',
   phone: '0308-4042598',
   location: 'Lahore, Pakistan',
   resumePath: '/Zain_Sajid_Resume.pdf',
-  availability: 'Available for full-time roles from July 2026',
+  availability: 'Available for full-time.',
   graduationYear: 2026,
   socials: {
     linkedin: 'https://linkedin.com/in/zain-sajid12',
@@ -130,17 +130,17 @@ export const heroMetrics: Metric[] = [
   {
     value: '2026',
     numericValue: 2026,
-    label: 'BS Software Engineering graduation',
+    label: 'BS Software Engineering graduate',
   },
 ];
 
 // ─── About Counters ──────────────────────────
 
 export const aboutCounters: Metric[] = [
-  { value: '3+', numericValue: 3, suffix: '+', label: 'Years of Learning' },
-  { value: '4+', numericValue: 4, suffix: '+', label: 'Projects Built' },
+  { value: '4+', numericValue: 3, suffix: '+', label: 'Years of Learning' },
+  { value: '10+', numericValue: 4, suffix: '+', label: 'Projects Built' },
   { value: '18+', numericValue: 18, suffix: '+', label: 'Technologies' },
-  { value: '3.21', numericValue: 3.21, label: 'CGPA / 4.0' },
+  { value: '3.28', numericValue: 3.28, label: 'CGPA/ 4.0' },
 ];
 
 // ─── Skills ──────────────────────────────────
@@ -322,11 +322,11 @@ export const projects: Project[] = [
 export const timeline: TimelineEntry[] = [
   {
     id: 'education',
-    date: 'Graduating July 2026',
+    date: 'Graduate',
     title: 'BS Software Engineering',
     subtitle: 'University of Central Punjab (UCP), Lahore',
     description:
-      'CGPA 3.21 / 4.0. Relevant coursework: Data Structures & Algorithms, OOP, Database Systems, Computer Networks, Web Technologies, Software Engineering.',
+      'CGPA 3.28 / 4.0. Relevant coursework: Data Structures & Algorithms, OOP, Database Systems, Computer Networks, Web Technologies, Software Engineering.',
     type: 'education',
   },
   {
