@@ -7,80 +7,110 @@ import { timeline } from '@/app/_lib/data';
 import { ScrollReveal } from '@/app/_components/ui/scroll-reveal';
 import { SectionHeader } from '@/app/_components/ui/section-header';
 
+type FilterType = 'all' | 'education' | 'project' | 'certification' | 'achievement';
+
+const FILTERS: { value: FilterType; label: string }[] = [
+  { value: 'all', label: 'All' },
+  { value: 'education', label: 'Education' },
+  { value: 'project', label: 'Projects' },
+  { value: 'certification', label: 'Certs' },
+  { value: 'achievement', label: 'Community' },
+];
+
+const TYPE_CONFIG: Record<string, { color: string; bg: string; glow: string }> = {
+  education: {
+    color: 'var(--accent-blue)',
+    bg: 'rgba(116,167,255,0.1)',
+    glow: 'rgba(116,167,255,0.35)',
+  },
+  project: {
+    color: 'var(--accent-green)',
+    bg: 'rgba(91,224,173,0.1)',
+    glow: 'rgba(91,224,173,0.35)',
+  },
+  certification: {
+    color: 'var(--accent-rose)',
+    bg: 'rgba(255,140,159,0.1)',
+    glow: 'rgba(255,140,159,0.35)',
+  },
+  achievement: {
+    color: 'var(--accent-amber)',
+    bg: 'rgba(255,209,102,0.1)',
+    glow: 'rgba(255,209,102,0.35)',
+  },
+};
+
+function getIcon(type: string) {
+  switch (type) {
+    case 'education': return <BookOpen size={14} />;
+    case 'certification': return <Award size={14} />;
+    case 'project': return <Code size={14} />;
+    default: return <Users size={14} />;
+  }
+}
+
 export function ExperienceSection() {
-  const [filter, setFilter] = useState<'all' | 'education' | 'project' | 'certification' | 'achievement'>('all');
+  const [filter, setFilter] = useState<FilterType>('all');
 
   const filteredTimeline = filter === 'all'
     ? timeline
     : timeline.filter((item) => item.type === filter);
-
-  const getIcon = (type: string) => {
-    switch (type) {
-      case 'education':
-        return <BookOpen size={16} />;
-      case 'certification':
-        return <Award size={16} />;
-      case 'project':
-        return <Code size={16} />;
-      default:
-        return <Users size={16} />;
-    }
-  };
-
-  const getIconColor = (type: string) => {
-    switch (type) {
-      case 'education':
-        return 'var(--accent-blue)';
-      case 'project':
-        return 'var(--accent-green)';
-      case 'certification':
-        return 'var(--accent-rose)';
-      default:
-        return 'var(--accent-amber)';
-    }
-  };
 
   return (
     <section id="experience" className="shell py-24 border-t border-[var(--line)]">
       <SectionHeader
         eyebrow="04 // ROADMAP"
         title="Education & Journey"
-        description="A timeline of software engineering education, industrial projects, certifications, and professional involvement."
+        description="A timeline of software engineering education, capstone projects, certifications, and professional involvement."
       />
 
-      {/* Interactive Filters */}
+      {/* ── Filter pills ── */}
       <div className="flex flex-wrap gap-2 mt-8 justify-center">
-        {(['all', 'education', 'project', 'certification', 'achievement'] as const).map((type) => (
-          <button
-            key={type}
-            onClick={() => setFilter(type)}
-            className={`btn-ghost text-xs tracking-wider uppercase px-4 py-2 ${
-              filter === type ? 'active-filter' : ''
-            }`}
-            style={{
-              borderRadius: 20,
-              border: '1px solid var(--line)',
-              background: filter === type ? 'var(--foreground)' : 'transparent',
-              color: filter === type ? 'var(--background)' : 'var(--muted)',
-            }}
-          >
-            {type}
-          </button>
-        ))}
+        {FILTERS.map(({ value, label }) => {
+          const isActive = filter === value;
+          return (
+            <motion.button
+              key={value}
+              onClick={() => setFilter(value)}
+              whileTap={{ scale: 0.96 }}
+              className="exp-filter-pill"
+              data-active={isActive}
+              aria-pressed={isActive}
+            >
+              {isActive && (
+                <motion.span
+                  layoutId="exp-filter-bg"
+                  className="exp-filter-pill-bg"
+                  transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+                />
+              )}
+              <span className="relative z-10">{label}</span>
+            </motion.button>
+          );
+        })}
       </div>
 
-      {/* Vertical Timeline */}
+      {/* ── Vertical timeline ── */}
       <div className="relative max-w-2xl mx-auto mt-14 pl-8 md:pl-0">
-        {/* Center line (visible on desktop) */}
-        <div
-          className="absolute top-0 bottom-0 left-0 md:left-1/2 w-[1px] bg-[var(--line)]"
-          style={{ transform: 'translateX(-50%)' }}
+        {/* Animated center line */}
+        <motion.div
+          className="absolute top-0 bottom-0 left-0 md:left-1/2 w-px"
+          style={{
+            background: 'linear-gradient(to bottom, transparent, var(--accent-blue), var(--accent-green), transparent)',
+            transform: 'translateX(-50%)',
+            opacity: 0.35,
+          }}
+          initial={{ scaleY: 0, originY: 0 }}
+          whileInView={{ scaleY: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.2, ease: 'easeOut' }}
         />
 
-        <div className="grid gap-12 relative">
+        <div className="grid gap-10 relative">
           <AnimatePresence mode="popLayout">
             {filteredTimeline.map((item, idx) => {
               const isEven = idx % 2 === 0;
+              const cfg = TYPE_CONFIG[item.type] ?? TYPE_CONFIG.achievement;
 
               return (
                 <motion.div
@@ -88,60 +118,64 @@ export function ExperienceSection() {
                   layout
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.35 }}
+                  exit={{ opacity: 0, y: -16, scale: 0.97 }}
+                  transition={{ duration: 0.32, delay: idx * 0.04 }}
                   className={`relative flex flex-col md:flex-row md:items-center ${
                     isEven ? 'md:justify-start' : 'md:justify-end'
                   }`}
                 >
-                  {/* Circle Indicator on vertical line */}
+                  {/* Node dot on the line */}
                   <div
-                    className="absolute left-0 md:left-1/2 w-8 h-8 rounded-full border grid place-items-center bg-[var(--background)]"
+                    className="exp-node"
                     style={{
-                      transform: 'translateX(-50%)',
-                      borderColor: getIconColor(item.type),
-                      color: getIconColor(item.type),
-                      boxShadow: `0 0 10px ${getIconColor(item.type)}40`,
+                      borderColor: cfg.color,
+                      color: cfg.color,
+                      boxShadow: `0 0 0 3px ${cfg.glow}`,
+                      background: 'var(--background)',
                     }}
                   >
                     {getIcon(item.type)}
                   </div>
 
-                  {/* Panel card content wrapper */}
+                  {/* Card */}
                   <div
-                    className={`w-full md:w-[calc(50%-32px)] ${
-                      isEven ? 'md:pr-0 md:mr-auto' : 'md:pl-0 md:ml-auto'
+                    className={`w-full md:w-[calc(50%-36px)] ${
+                      isEven ? 'md:mr-auto' : 'md:ml-auto'
                     }`}
                   >
-                    <ScrollReveal direction={isEven ? 'left' : 'right'} delay={0.05}>
-                      <div className="glass-panel p-6 relative">
-                        {/* Triangular arrow pointer for card (Desktop only) */}
+                    <ScrollReveal direction={isEven ? 'left' : 'right'} delay={0.04}>
+                      <div
+                        className="exp-card group"
+                        style={{ '--cfg-color': cfg.color, '--cfg-glow': cfg.bg } as React.CSSProperties}
+                      >
+                        {/* Connector arrow */}
                         <div
-                          className={`hidden md:block absolute top-6 w-3 h-3 rotate-45 border bg-[var(--panel)]`}
-                          style={{
-                            [isEven ? 'right' : 'left']: -7,
-                            borderTop: isEven ? 'none' : '1px solid var(--line)',
-                            borderRight: isEven ? '1px solid var(--line)' : 'none',
-                            borderBottom: isEven ? '1px solid var(--line)' : 'none',
-                            borderLeft: isEven ? 'none' : '1px solid var(--line)',
-                          }}
+                          className={`hidden md:block exp-arrow ${isEven ? 'exp-arrow--right' : 'exp-arrow--left'}`}
+                          style={{ borderColor: cfg.color + '40' }}
                         />
 
-                        {/* Date info */}
-                        <span className="text-xs font-mono text-[var(--soft)] uppercase tracking-wider block mb-2">
+                        {/* Date chip */}
+                        <span
+                          className="inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider px-2.5 py-1 rounded-full border mb-3"
+                          style={{
+                            color: cfg.color,
+                            borderColor: `${cfg.color}30`,
+                            background: cfg.bg,
+                          }}
+                        >
                           {item.date}
                         </span>
 
-                        <h3 className="text-lg font-bold">{item.title}</h3>
-
+                        <h3 className="text-[16px] font-bold leading-snug group-hover:text-[var(--cfg-color)] transition-colors">
+                          {item.title}
+                        </h3>
                         <h4
-                          className="text-sm font-medium mt-1"
-                          style={{ color: getIconColor(item.type) }}
+                          className="text-[13px] font-semibold mt-1"
+                          style={{ color: cfg.color }}
                         >
                           {item.subtitle}
                         </h4>
-
-                        <p className="text-sm text-[var(--muted)] mt-3 leading-relaxed">
+                        <p className="text-[13px] text-[var(--muted)] mt-3 leading-relaxed">
                           {item.description}
                         </p>
                       </div>
@@ -153,6 +187,99 @@ export function ExperienceSection() {
           </AnimatePresence>
         </div>
       </div>
+
+      <style jsx global>{`
+        .exp-filter-pill {
+          position: relative;
+          padding: 7px 16px;
+          border-radius: 999px;
+          border: 1px solid var(--line);
+          background: transparent;
+          color: var(--muted);
+          font-size: 12px;
+          font-family: var(--font-mono);
+          font-weight: 500;
+          cursor: pointer;
+          transition: color 0.2s, border-color 0.2s;
+          overflow: hidden;
+        }
+        .exp-filter-pill[data-active="true"] {
+          color: var(--foreground);
+          border-color: transparent;
+          font-weight: 700;
+        }
+        .exp-filter-pill:hover:not([data-active="true"]) {
+          color: var(--foreground);
+          border-color: var(--line-hover);
+        }
+        .exp-filter-pill-bg {
+          position: absolute;
+          inset: 0;
+          border-radius: 999px;
+          background: var(--foreground);
+          z-index: 0;
+        }
+        [data-theme="dark"] .exp-filter-pill-bg {
+          background: rgba(255,255,255,0.12);
+          border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .exp-node {
+          position: absolute;
+          left: 0;
+          top: 4px;
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          border: 1.5px solid;
+          display: grid;
+          place-items: center;
+          transform: translateX(-50%);
+          transition: box-shadow 0.3s, transform 0.3s;
+          z-index: 2;
+        }
+        .exp-node:hover {
+          transform: translateX(-50%) scale(1.15);
+        }
+        @media (min-width: 768px) {
+          .exp-node { left: 50%; top: 4px; }
+        }
+
+        .exp-card {
+          position: relative;
+          padding: 1.25rem 1.4rem;
+          border-radius: 13px;
+          border: 1px solid var(--line);
+          background: var(--panel);
+          backdrop-filter: blur(16px);
+          transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+        }
+        .exp-card:hover {
+          border-color: var(--cfg-color, var(--accent-blue));
+          box-shadow: 0 8px 32px var(--cfg-glow, rgba(116,167,255,0.1));
+          background: var(--panel-strong);
+        }
+
+        .exp-arrow {
+          position: absolute;
+          top: 20px;
+          width: 10px;
+          height: 10px;
+          transform: rotate(45deg);
+          background: var(--panel);
+          border: 1px solid;
+        }
+        .exp-arrow--right {
+          right: -6px;
+          border-top: none;
+          border-left: none;
+        }
+        .exp-arrow--left {
+          left: -6px;
+          border-bottom: none;
+          border-right: none;
+        }
+      `}</style>
     </section>
   );
 }

@@ -1,20 +1,129 @@
 'use client';
 
 import { useState, type FormEvent, type ChangeEvent } from 'react';
-import { Mail, Phone, MapPin, Send, Link, FileCode } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Mail, Phone, MapPin, Send, Link, FileCode, CheckCircle } from 'lucide-react';
 import { personalInfo } from '@/app/_lib/data';
 import { ScrollReveal } from '@/app/_components/ui/scroll-reveal';
 import { SectionHeader } from '@/app/_components/ui/section-header';
 import { MagneticButton } from '@/app/_components/ui/magnetic-button';
 import { formatPhoneForTel } from '@/app/_lib/utils';
 
+const INFO_ITEMS = [
+  {
+    icon: Mail,
+    color: 'var(--accent-blue)',
+    bg: 'rgba(116,167,255,0.08)',
+    border: 'rgba(116,167,255,0.25)',
+    label: 'Email',
+    value: personalInfo.email,
+    href: `mailto:${personalInfo.email}`,
+    hoverBorder: 'rgba(116,167,255,0.5)',
+  },
+  {
+    icon: Phone,
+    color: 'var(--accent-green)',
+    bg: 'rgba(91,224,173,0.08)',
+    border: 'rgba(91,224,173,0.25)',
+    label: 'Phone',
+    value: personalInfo.phone,
+    href: `tel:${formatPhoneForTel(personalInfo.phone)}`,
+    hoverBorder: 'rgba(91,224,173,0.5)',
+  },
+  {
+    icon: MapPin,
+    color: 'var(--accent-amber)',
+    bg: 'rgba(255,209,102,0.08)',
+    border: 'rgba(255,209,102,0.2)',
+    label: 'Location',
+    value: personalInfo.location,
+    href: null,
+    hoverBorder: 'rgba(255,209,102,0.4)',
+  },
+];
+
+function FloatingLabelField({
+  id,
+  name,
+  label,
+  type = 'text',
+  value,
+  onChange,
+  error,
+  placeholder,
+  as,
+  rows,
+}: {
+  id: string;
+  name: string;
+  label: string;
+  type?: string;
+  value: string;
+  onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  error?: string;
+  placeholder?: string;
+  as?: 'textarea';
+  rows?: number;
+}) {
+  const [focused, setFocused] = useState(false);
+  const lifted = focused || value.length > 0;
+
+  return (
+    <div className="fl-field">
+      <div className={`fl-input-wrap ${error ? 'fl-error' : ''} ${focused ? 'fl-focused' : ''}`}>
+        <label htmlFor={id} className={`fl-label ${lifted ? 'fl-label--lifted' : ''}`}>
+          {label}
+        </label>
+        {as === 'textarea' ? (
+          <textarea
+            id={id}
+            name={name}
+            value={value}
+            rows={rows ?? 5}
+            placeholder={lifted ? placeholder : ''}
+            onChange={onChange}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            aria-invalid={!!error}
+            aria-describedby={error ? `${id}-error` : undefined}
+            className="fl-textarea"
+          />
+        ) : (
+          <input
+            id={id}
+            name={name}
+            type={type}
+            value={value}
+            placeholder={lifted ? placeholder : ''}
+            onChange={onChange}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            aria-invalid={!!error}
+            aria-describedby={error ? `${id}-error` : undefined}
+            className="fl-input"
+          />
+        )}
+      </div>
+      <AnimatePresence>
+        {error && (
+          <motion.span
+            id={`${id}-error`}
+            role="alert"
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            className="text-[12px] text-[var(--accent-rose)] mt-1 flex items-center gap-1"
+          >
+            {error}
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export function ContactSection() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
-  });
+  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
 
@@ -24,7 +133,7 @@ export function ContactSection() {
     if (!formData.email.trim()) {
       next.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      next.email = 'Enter a valid email address';
+      next.email = 'Enter a valid email';
     }
     if (!formData.message.trim()) next.message = 'Message is required';
     setErrors(next);
@@ -34,28 +143,18 @@ export function ContactSection() {
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors((prev) => {
-        const copy = { ...prev };
-        delete copy[name];
-        return copy;
-      });
-    }
+    if (errors[name]) setErrors((prev) => { const c = { ...prev }; delete c[name]; return c; });
   };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
-
     const subject = encodeURIComponent(formData.subject || 'Portfolio inquiry');
-    const body = encodeURIComponent(
-      `Name: ${formData.name}\nEmail: ${formData.email}\n\n${formData.message}`
-    );
-
+    const body = encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\n${formData.message}`);
     window.location.href = `mailto:${personalInfo.email}?subject=${subject}&body=${body}`;
     setSubmitted(true);
     setFormData({ name: '', email: '', subject: '', message: '' });
-    setTimeout(() => setSubmitted(false), 4000);
+    setTimeout(() => setSubmitted(false), 4500);
   };
 
   return (
@@ -63,146 +162,220 @@ export function ContactSection() {
       <SectionHeader
         eyebrow="07 // INITIATE"
         title="Get in Touch"
-        description="Whether you have an opening, a freelance project, or just want to say hi—reach out!"
+        description="Whether you have an opening, a freelance project, or just want to say hello — I'd love to hear from you."
       />
 
-      <div
-        className="grid gap-12 mt-12 items-start contact-grid"
-        style={{ gridTemplateColumns: 'minmax(0, 0.9fr) minmax(0, 1.1fr)' }}
-      >
+      <div className="grid gap-10 mt-12 items-start contact-grid">
+        {/* ── Left info panel ── */}
         <ScrollReveal direction="left">
-          <div className="grid gap-6">
-            <h3 className="text-2xl font-bold">Let&apos;s talk.</h3>
-            <p className="text-base leading-relaxed text-[var(--muted)]">
-              I am interested in full-time roles, Capstone discussions, and collaborative projects.
-              Feel free to use the form or reach me via any of the channels below:
-            </p>
-
-            <div className="grid gap-4 mt-4">
-              <a
-                href={`mailto:${personalInfo.email}`}
-                className="glass-panel p-4 flex items-center gap-4 hover:border-[var(--accent-blue)] transition-colors"
-              >
-                <div className="p-2.5 rounded bg-white/[0.02] text-[var(--accent-blue)] border border-[var(--line)]">
-                  <Mail size={18} />
-                </div>
-                <div>
-                  <span className="block text-xs font-mono text-[var(--soft)] uppercase">Email</span>
-                  <strong className="text-sm font-semibold">{personalInfo.email}</strong>
-                </div>
-              </a>
-
-              <a
-                href={`tel:${formatPhoneForTel(personalInfo.phone)}`}
-                className="glass-panel p-4 flex items-center gap-4 hover:border-[var(--accent-green)] transition-colors"
-              >
-                <div className="p-2.5 rounded bg-white/[0.02] text-[var(--accent-green)] border border-[var(--line)]">
-                  <Phone size={18} />
-                </div>
-                <div>
-                  <span className="block text-xs font-mono text-[var(--soft)] uppercase">Phone</span>
-                  <strong className="text-sm font-semibold">{personalInfo.phone}</strong>
-                </div>
-              </a>
-
-              <div className="glass-panel p-4 flex items-center gap-4">
-                <div className="p-2.5 rounded bg-white/[0.02] text-[var(--accent-amber)] border border-[var(--line)]">
-                  <MapPin size={18} />
-                </div>
-                <div>
-                  <span className="block text-xs font-mono text-[var(--soft)] uppercase">Location</span>
-                  <strong className="text-sm font-semibold">{personalInfo.location}</strong>
-                </div>
-              </div>
+          <div className="grid gap-5">
+            <div>
+              <h3 className="text-[22px] font-extrabold mb-2">Let&apos;s talk.</h3>
+              <p className="text-[14px] leading-[1.8] text-[var(--muted)]">
+                I&apos;m interested in full-time roles, capstone collaborations, and freelance projects.
+                Reach me through any channel below, or use the form.
+              </p>
             </div>
 
-            <div className="flex gap-3 mt-4">
+            <div className="grid gap-3">
+              {INFO_ITEMS.map((item) => {
+                const Icon = item.icon;
+                const inner = (
+                  <div
+                    className="contact-info-card"
+                    style={{
+                      '--info-border': item.border,
+                      '--info-hover': item.hoverBorder,
+                      '--info-bg': item.bg,
+                    } as React.CSSProperties}
+                  >
+                    <div
+                      className="p-2.5 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200"
+                      style={{ background: item.bg, border: `1px solid ${item.border}` }}
+                    >
+                      <Icon size={17} style={{ color: item.color }} />
+                    </div>
+                    <div className="min-w-0">
+                      <span className="block text-[10px] font-mono text-[var(--soft)] uppercase tracking-widest mb-0.5">
+                        {item.label}
+                      </span>
+                      <strong className="text-[13px] font-semibold truncate block">{item.value}</strong>
+                    </div>
+                  </div>
+                );
+                return item.href ? (
+                  <a key={item.label} href={item.href}>{inner}</a>
+                ) : (
+                  <div key={item.label}>{inner}</div>
+                );
+              })}
+            </div>
+
+            {/* Social row */}
+            <div className="flex gap-2 pt-1">
               <a
                 href={personalInfo.socials.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-ghost"
-                style={{ width: 42, minHeight: 42, padding: 0 }}
+                className="contact-social-btn"
                 aria-label="LinkedIn Profile"
               >
-                <Link size={18} />
+                <Link size={16} />
+                <span className="text-xs font-mono">LinkedIn</span>
               </a>
               <a
                 href={personalInfo.socials.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-ghost"
-                style={{ width: 42, minHeight: 42, padding: 0 }}
+                className="contact-social-btn"
                 aria-label="GitHub Profile"
               >
-                <FileCode size={18} />
+                <FileCode size={16} />
+                <span className="text-xs font-mono">GitHub</span>
               </a>
             </div>
           </div>
         </ScrollReveal>
 
-        <ScrollReveal direction="right" delay={0.2}>
-          <form onSubmit={handleSubmit} className="glass-panel p-8 grid gap-5" noValidate>
-            {(['name', 'email', 'subject'] as const).map((field) => (
-              <div key={field} className="grid gap-1.5">
-                <label htmlFor={field} className="text-xs font-mono uppercase text-[var(--muted)]">
-                  {field === 'name' ? 'Your Name' : field === 'email' ? 'Email Address' : 'Subject'}
-                </label>
-                <input
-                  type={field === 'email' ? 'email' : 'text'}
-                  id={field}
-                  name={field}
-                  value={formData[field]}
-                  onChange={handleChange}
-                  className={errors[field] ? 'border-[var(--accent-rose)]' : ''}
-          
-                  aria-invalid={!!errors[field]}
-                  aria-describedby={errors[field] ? `${field}-error` : undefined}
-                />
-                {errors[field] && (
-                  <span id={`${field}-error`} className="text-xs text-[var(--accent-rose)]">
-                    {errors[field]}
-                  </span>
-                )}
-              </div>
-            ))}
-
-            <div className="grid gap-1.5">
-              <label htmlFor="message" className="text-xs font-mono uppercase text-[var(--muted)]">
-                Message
-              </label>
-              <textarea
-                id="message"
-                name="message"
-                value={formData.message}
-                onChange={handleChange}
-                rows={5}
-                className={errors.message ? 'border-[var(--accent-rose)]' : ''}
-                placeholder="Describe your project, timeline, or job scope..."
-                aria-invalid={!!errors.message}
-                aria-describedby={errors.message ? 'message-error' : undefined}
-              />
-              {errors.message && (
-                <span id="message-error" className="text-xs text-[var(--accent-rose)]">
-                  {errors.message}
-                </span>
-              )}
+        {/* ── Right form ── */}
+        <ScrollReveal direction="right" delay={0.15}>
+          <form
+            onSubmit={handleSubmit}
+            className="glass-panel p-7 md:p-8 grid gap-4"
+            noValidate
+            aria-label="Contact form"
+          >
+            <div className="grid sm:grid-cols-2 gap-4">
+              <FloatingLabelField id="name" name="name" label="Your Name" value={formData.name} onChange={handleChange} error={errors.name} placeholder="Zain Sajid" />
+              <FloatingLabelField id="email" name="email" label="Email Address" type="email" value={formData.email} onChange={handleChange} error={errors.email} placeholder="you@email.com" />
             </div>
+            <FloatingLabelField id="subject" name="subject" label="Subject (optional)" value={formData.subject} onChange={handleChange} placeholder="Project inquiry, job offer…" />
+            <FloatingLabelField id="message" name="message" label="Message" value={formData.message} onChange={handleChange} error={errors.message} as="textarea" rows={5} placeholder="Tell me about your project or role…" />
 
-            <MagneticButton type="submit" className="btn-primary w-full mt-2 min-h-[46px]">
-              <Send size={16} />
-              {submitted ? 'Opening your email client…' : 'Send Message'}
+            <MagneticButton type="submit" className={`btn-primary w-full mt-1 min-h-[48px] text-[14px] font-bold ${submitted ? 'btn-submitted' : ''}`}>
+              <AnimatePresence mode="wait" initial={false}>
+                {submitted ? (
+                  <motion.span key="ok" className="flex items-center gap-2" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}>
+                    <CheckCircle size={16} /> Message sent — opening email client…
+                  </motion.span>
+                ) : (
+                  <motion.span key="send" className="flex items-center gap-2" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}>
+                    <Send size={15} /> Send Message
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </MagneticButton>
           </form>
         </ScrollReveal>
       </div>
 
       <style jsx global>{`
-        @media (max-width: 900px) {
-          .contact-grid {
-            grid-template-columns: 1fr !important;
-          }
+        /* Grid */
+        .contact-grid { grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr); }
+        @media (max-width: 900px) { .contact-grid { grid-template-columns: 1fr !important; } }
+
+        /* Info cards */
+        .contact-info-card {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          padding: 14px 16px;
+          border-radius: 12px;
+          border: 1px solid var(--info-border, var(--line));
+          background: var(--panel);
+          transition: border-color 0.22s, box-shadow 0.22s, background 0.22s;
         }
+        .contact-info-card:hover,
+        a:hover .contact-info-card {
+          border-color: var(--info-hover, var(--accent-blue));
+          box-shadow: 0 4px 20px var(--info-bg, rgba(116,167,255,0.1));
+          background: var(--panel-strong);
+        }
+
+        /* Social buttons */
+        .contact-social-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          padding: 9px 16px;
+          border-radius: 10px;
+          border: 1px solid var(--line);
+          background: var(--surface-subtle);
+          color: var(--muted);
+          transition: border-color 0.2s, color 0.2s, transform 0.2s, background 0.2s;
+        }
+        .contact-social-btn:hover {
+          border-color: var(--line-hover);
+          color: var(--foreground);
+          background: var(--surface-hover);
+          transform: translateY(-2px);
+        }
+
+        /* Floating label inputs */
+        .fl-field { display: flex; flex-direction: column; }
+        .fl-input-wrap {
+          position: relative;
+          border: 1px solid var(--line);
+          border-radius: 10px;
+          background: rgba(255,255,255,0.03);
+          transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .fl-input-wrap.fl-focused {
+          border-color: var(--accent-blue);
+          box-shadow: 0 0 0 3px rgba(116,167,255,0.1);
+        }
+        .fl-input-wrap.fl-error {
+          border-color: var(--accent-rose);
+        }
+        .fl-label {
+          position: absolute;
+          left: 15px;
+          top: 50%;
+          transform: translateY(-50%);
+          font-size: 13px;
+          color: var(--soft);
+          pointer-events: none;
+          transition: all 0.18s ease;
+          white-space: nowrap;
+          z-index: 1;
+        }
+        .fl-input-wrap:has(textarea) .fl-label {
+          top: 18px;
+          transform: none;
+        }
+        .fl-label--lifted {
+          top: 8px;
+          transform: none;
+          font-size: 10px;
+          font-family: var(--font-mono);
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          color: var(--accent-blue);
+        }
+        .fl-input {
+          width: 100%;
+          border: none;
+          background: transparent;
+          color: var(--foreground);
+          padding: 22px 15px 8px;
+          outline: none;
+          font-size: 14px;
+          border-radius: 10px;
+        }
+        .fl-textarea {
+          width: 100%;
+          border: none;
+          background: transparent;
+          color: var(--foreground);
+          padding: 28px 15px 12px;
+          outline: none;
+          font-size: 14px;
+          resize: vertical;
+          min-height: 130px;
+          border-radius: 10px;
+        }
+        [data-theme="light"] .fl-input-wrap { background: rgba(255,255,255,0.65); }
+        .btn-submitted { background: linear-gradient(135deg, var(--accent-green), #2cb78a); }
       `}</style>
     </section>
   );

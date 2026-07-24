@@ -6,28 +6,44 @@ import { Shield, Cpu, RefreshCw, Smartphone } from 'lucide-react';
 
 const methodologies = [
   {
-    icon: <Cpu size={24} className="text-[var(--accent-blue)]" />,
+    icon: Cpu,
+    color: 'var(--accent-blue)',
+    glow: 'rgba(116,167,255,0.12)',
+    badge: 'rgba(116,167,255,0.08)',
     title: 'Layered MVC Backend',
     description:
-      'Structing REST endpoints cleanly: Routes → Controllers → Services → Models. Decoupling business logic from request layers to ensure code modularity, ease of testing, and straightforward maintainability.',
+      'Structuring REST endpoints cleanly: Routes → Controllers → Services → Models. Decoupling business logic from request layers to ensure modularity, ease of testing, and straightforward maintainability.',
+    tag: 'Architecture',
   },
   {
-    icon: <RefreshCw size={24} className="text-[var(--accent-green)]" />,
+    icon: RefreshCw,
+    color: 'var(--accent-green)',
+    glow: 'rgba(91,224,173,0.12)',
+    badge: 'rgba(91,224,173,0.08)',
     title: 'Real-Time State Engines',
     description:
-      'Synchronizing concurrent web systems over WebSockets/Socket.io. Designing solid anti-sniping bid loops, live user-presence indicators, typing receipts, and reliable payload validation mechanisms.',
+      'Synchronizing concurrent web systems over WebSockets & Socket.io — anti-sniping bid loops, live presence indicators, typing receipts, and reliable payload validation.',
+    tag: 'Real-Time',
   },
   {
-    icon: <Shield size={24} className="text-[var(--accent-rose)]" />,
+    icon: Shield,
+    color: 'var(--accent-rose)',
+    glow: 'rgba(255,140,159,0.12)',
+    badge: 'rgba(255,140,159,0.08)',
     title: 'Secure JWT Authentication',
     description:
-      'Protecting routes with custom middleware layers, verifying JSON Web Tokens, implementing CORS policies, securing passwords with bcrypt, and sanitizing user inputs using Joi validations.',
+      'Protecting routes with custom middleware, verifying JSON Web Tokens, enforcing CORS policies, hashing passwords with bcrypt, and sanitizing inputs via Joi validations.',
+    tag: 'Security',
   },
   {
-    icon: <Smartphone size={24} className="text-[var(--accent-amber)]" />,
+    icon: Smartphone,
+    color: 'var(--accent-amber)',
+    glow: 'rgba(255,209,102,0.12)',
+    badge: 'rgba(255,209,102,0.08)',
     title: 'Mobile Architecture',
     description:
-      'Compiling responsive native screens in React Native. Bridging custom configurations, local cache engines, and backend sockets to deliver high-fidelity cross-platform applications.',
+      'Building responsive native screens in React Native — bridging custom configs, local cache engines, and backend sockets to deliver cross-platform applications.',
+    tag: 'Mobile',
   },
 ];
 
@@ -37,31 +53,76 @@ export function SkillsSection() {
       <SectionHeader
         eyebrow="05 // EXPERTISE"
         title="Software Engineering Principles"
-        description="Beyond coding: applying architectural design patterns, database optimization, and secure development lifecycles."
+        description="Beyond syntax — applying architectural patterns, database optimization, and secure development lifecycles."
       />
 
-      <div className="grid gap-6 mt-12 sm:grid-cols-2">
-        {methodologies.map((method, idx) => (
-          <ScrollReveal key={idx} direction="up" delay={idx * 0.1}>
-            <div className="glass-panel p-8 h-full flex gap-5 flex-col md:flex-row items-start hover:border-[var(--accent-blue)] transition-colors">
+      <div className="grid gap-5 mt-12 sm:grid-cols-2">
+        {methodologies.map((method, idx) => {
+          const Icon = method.icon;
+          return (
+            <ScrollReveal key={idx} direction="up" delay={idx * 0.09}>
               <div
-                className="p-3.5 rounded-lg border border-[var(--line)] bg-white/[0.02] flex items-center justify-center shrink-0"
-                style={{
-                  boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
-                }}
+                className="skill-principle-card group h-full"
+                style={{ '--card-glow': method.glow, '--card-color': method.color } as React.CSSProperties}
               >
-                {method.icon}
-              </div>
-              <div className="grid gap-2">
-                <h3 className="text-lg font-bold">{method.title}</h3>
-                <p className="text-sm text-[var(--muted)] leading-relaxed">
+                {/* Icon + tag row */}
+                <div className="flex items-start justify-between mb-5">
+                  <div
+                    className="p-3 rounded-xl border transition-all duration-300 group-hover:scale-105 group-hover:shadow-[0_0_20px_var(--card-glow)]"
+                    style={{
+                      background: method.badge,
+                      borderColor: `${method.color}30`,
+                    }}
+                  >
+                    <Icon size={22} style={{ color: method.color }} strokeWidth={1.8} />
+                  </div>
+                  <span
+                    className="text-[10px] font-mono font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full border"
+                    style={{
+                      color: method.color,
+                      borderColor: `${method.color}30`,
+                      background: method.badge,
+                    }}
+                  >
+                    {method.tag}
+                  </span>
+                </div>
+
+                <h3 className="text-[17px] font-bold mb-3 transition-colors duration-200 group-hover:text-[var(--card-color)]">
+                  {method.title}
+                </h3>
+
+                <p className="text-[13px] text-[var(--muted)] leading-[1.75]">
                   {method.description}
                 </p>
+
+                {/* Bottom accent line */}
+                <div
+                  className="mt-5 h-[2px] rounded-full w-0 group-hover:w-full transition-all duration-500"
+                  style={{ background: `linear-gradient(90deg, ${method.color}, transparent)` }}
+                />
               </div>
-            </div>
-          </ScrollReveal>
-        ))}
+            </ScrollReveal>
+          );
+        })}
       </div>
+
+      <style jsx global>{`
+        .skill-principle-card {
+          padding: 1.5rem;
+          border-radius: 14px;
+          border: 1px solid var(--line);
+          background: var(--panel);
+          backdrop-filter: blur(16px);
+          transition: border-color 0.28s, box-shadow 0.28s, background 0.28s;
+          overflow: hidden;
+        }
+        .skill-principle-card:hover {
+          border-color: rgba(116,167,255,0.22);
+          box-shadow: 0 12px 40px var(--card-glow, rgba(116,167,255,0.1));
+          background: var(--panel-strong);
+        }
+      `}</style>
     </section>
   );
 }

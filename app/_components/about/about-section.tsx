@@ -6,10 +6,19 @@ import { personalInfo, aboutCounters, techGlobeItems } from '@/app/_lib/data';
 import { AnimatedCounter } from '@/app/_components/ui/animated-counter';
 
 const journeyCards = [
-  { label: 'Learning', title: 'Self-Taught Foundations', hint: '2019 — Present' },
-  { label: 'University', title: 'BS Software Engineering', hint: 'UCP, Lahore' },
-  { label: 'Capstone', title: 'IntelliBid AI Platform', hint: '2025 — 2026' },
+  { label: 'Self-Taught', title: 'Foundations', hint: '2019 — Present', color: 'var(--accent-amber)' },
+  { label: 'University', title: 'BS Software Eng.', hint: 'UCP, Lahore', color: 'var(--accent-blue)' },
+  { label: 'Capstone', title: 'IntelliBid AI', hint: '2025 — 2026', color: 'var(--accent-green)' },
 ];
+
+const cardVariant = {
+  hidden: { opacity: 0, y: 18 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, delay: i * 0.07, ease: [0.25, 0.1, 0.25, 1] as const },
+  }),
+};
 
 export function AboutSection() {
   const [activeJourney, setActiveJourney] = useState(1);
@@ -22,150 +31,123 @@ export function AboutSection() {
             <span className="dot" />
             01 // About
           </p>
-          <h2 className="text-[clamp(28px,4vw,44px)] font-extrabold leading-tight">
+          <h2 className="text-[clamp(26px,4vw,44px)] font-extrabold leading-tight">
             The engineer behind the code
           </h2>
         </div>
-        <p className="hidden md:block text-sm text-[var(--muted)] max-w-xs text-right font-mono">
+        <p className="hidden md:block text-xs font-mono text-[var(--soft)]">
           Hover to explore →
         </p>
       </div>
 
-      {/* Bento grid */}
+      {/* ── Bento grid ── */}
       <div className="bento-grid gap-3">
+
         {/* Name card */}
-        <motion.div
-          className="bento-card bento-name"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-        >
-          <p className="text-xs font-mono text-[var(--soft)] uppercase tracking-widest">Identity</p>
-          <h3 className="text-2xl lg:text-3xl font-extrabold mt-3 tracking-tight uppercase">
+        <motion.div className="bento-card bento-name" custom={0} variants={cardVariant} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+          <p className="text-[10px] font-mono text-[var(--soft)] uppercase tracking-widest mb-3">Identity</p>
+          <h3 className="text-[clamp(18px,2.5vw,28px)] font-extrabold tracking-tight uppercase leading-tight">
             {personalInfo.name}
           </h3>
-          <p className="text-sm text-[var(--muted)] mt-1 font-mono uppercase tracking-wider">
+          <p className="text-[12px] text-[var(--muted)] mt-1.5 font-mono uppercase tracking-wider">
             {personalInfo.title}
           </p>
+          <div className="flex items-center gap-2 mt-4">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--accent-green)] opacity-60" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--accent-green)]" />
+            </span>
+            <span className="text-[11px] font-mono text-[var(--accent-green)]">{personalInfo.availability}</span>
+          </div>
         </motion.div>
 
         {/* Journey carousel */}
-        <motion.div
-          className="bento-card bento-journey"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.05 }}
-        >
-          <p className="text-xs font-mono text-[var(--soft)] uppercase tracking-widest mb-4">
-            Journey
-          </p>
-          <div className="flex gap-2 overflow-x-auto pb-1">
+        <motion.div className="bento-card bento-journey" custom={1} variants={cardVariant} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+          <p className="text-[10px] font-mono text-[var(--soft)] uppercase tracking-widest mb-4">Journey</p>
+          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
             {journeyCards.map((card, i) => (
               <button
                 key={card.title}
                 type="button"
                 onMouseEnter={() => setActiveJourney(i)}
                 onFocus={() => setActiveJourney(i)}
-                className={`journey-pill shrink-0 ${activeJourney === i ? 'journey-pill-active' : ''}`}
+                onClick={() => setActiveJourney(i)}
+                className="journey-pill shrink-0"
+                data-active={activeJourney === i}
+                style={{ '--pill-color': card.color } as React.CSSProperties}
               >
-                <span className="text-[10px] font-mono uppercase text-[var(--soft)]">{card.label}</span>
-                <span className="text-sm font-semibold mt-1 block">{card.title}</span>
-                <span className="text-xs text-[var(--muted)] mt-0.5 block">{card.hint}</span>
+                <span className="text-[9px] font-mono uppercase text-[var(--soft)] mb-1 block">{card.label}</span>
+                <span className="text-[13px] font-bold block leading-tight">{card.title}</span>
+                <span className="text-[11px] text-[var(--muted)] mt-1 block">{card.hint}</span>
               </button>
             ))}
           </div>
         </motion.div>
 
         {/* Mindset */}
-        <motion.div
-          className="bento-card bento-mindset"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          whileHover={{ y: -4 }}
-        >
-          <h4 className="text-lg font-bold">Mindset</h4>
-          <p className="text-sm text-[var(--muted)] leading-relaxed mt-3">
-            Discipline over motivation. I treat every feature like a production system — measured,
-            tested, and built to scale. Clean architecture isn&apos;t optional; it&apos;s the baseline.
+        <motion.div className="bento-card bento-mindset" custom={2} variants={cardVariant} initial="hidden" whileInView="visible" viewport={{ once: true }} whileHover={{ y: -4 }}>
+          <p className="text-[10px] font-mono text-[var(--soft)] uppercase tracking-widest mb-3">Mindset</p>
+          <h4 className="text-[16px] font-bold mb-3">Discipline over motivation.</h4>
+          <p className="text-[13px] text-[var(--muted)] leading-[1.75]">
+            I treat every feature like a production system — measured, tested, built to scale.
+            Clean architecture isn&apos;t optional; it&apos;s the baseline.
           </p>
-          <p className="text-xs font-mono text-[var(--accent-green)] mt-5">
-            Mastering craft through consistent iteration.
+          <p className="text-[11px] font-mono text-[var(--accent-green)] mt-4 border-t border-[var(--line)] pt-3">
+            → Mastering craft through consistent iteration
           </p>
         </motion.div>
 
-        {/* Avatar / profile anchor */}
-        <motion.div
-          className="bento-card bento-profile"
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.15 }}
-        >
+        {/* Profile card */}
+        <motion.div className="bento-card bento-profile" custom={3} variants={cardVariant} initial="hidden" whileInView="visible" viewport={{ once: true }}>
           <div className="profile-ring">
             <span className="profile-initials">{personalInfo.initials}</span>
           </div>
-          <p className="text-xs font-mono text-[var(--soft)] mt-4 uppercase tracking-wider">
-            {personalInfo.availability}
+          <p className="text-[11px] font-mono text-[var(--soft)] mt-4 uppercase tracking-wider text-center">
+            {personalInfo.location}
+          </p>
+          <p className="text-[10px] font-mono text-[var(--soft)] opacity-60 mt-1">
+            31.52°N · 74.35°E
           </p>
         </motion.div>
 
         {/* Craft */}
-        <motion.div
-          className="bento-card bento-craft"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          whileHover={{ y: -4 }}
-        >
-          <h4 className="text-lg font-bold">Craft</h4>
-          <p className="text-sm text-[var(--muted)] leading-relaxed mt-3">
-            Scalable MERN apps, real-time Socket.io engines, and AI-integrated platforms — architected
-            with layered MVC, sub-100ms API targets, and interfaces that feel premium.
+        <motion.div className="bento-card bento-craft" custom={4} variants={cardVariant} initial="hidden" whileInView="visible" viewport={{ once: true }} whileHover={{ y: -4 }}>
+          <p className="text-[10px] font-mono text-[var(--soft)] uppercase tracking-widest mb-3">Craft</p>
+          <h4 className="text-[16px] font-bold mb-3">What I build.</h4>
+          <p className="text-[13px] text-[var(--muted)] leading-[1.75]">
+            Scalable MERN apps, real-time Socket.io engines, AI-integrated platforms — architected with
+            layered MVC, sub-100ms API targets, and interfaces that feel premium.
           </p>
-          <div className="flex flex-wrap gap-2 mt-5">
+          <div className="flex flex-wrap gap-2 mt-4">
             {techGlobeItems.slice(0, 5).map((t) => (
-              <span key={t.name} className="tech-pill" style={{ color: t.color }}>
+              <span key={t.name} className="tech-pill" style={{ color: t.color, borderColor: `${t.color}25`, background: `${t.color}0a` }}>
                 {t.name}
               </span>
             ))}
           </div>
-          <div className="flex items-center gap-2 mt-5">
-            <span className="w-2 h-2 rounded-full bg-[var(--accent-green)] animate-pulse" />
-            <span className="text-xs font-mono text-[var(--muted)]">Open to collaboration & full-time roles</span>
-          </div>
         </motion.div>
 
-        {/* Location */}
-        <motion.div
-          className="bento-card bento-location"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.25 }}
-        >
-          <p className="text-[clamp(22px,3vw,32px)] font-extrabold uppercase tracking-tight">
-            Lahore, Pakistan
+        {/* Location banner */}
+        <motion.div className="bento-card bento-location" custom={5} variants={cardVariant} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+          <p className="text-[clamp(18px,2.5vw,28px)] font-extrabold uppercase tracking-tight leading-tight">
+            Lahore,<br />Pakistan
           </p>
-          <p className="text-xs font-mono text-[var(--soft)] mt-2">31.5204° N · 74.3587° E · GMT+5</p>
+          <p className="text-[10px] font-mono text-[var(--soft)] mt-2">GMT+5 · PKT</p>
         </motion.div>
 
-        {/* Metrics row */}
+        {/* Metric cards */}
         {aboutCounters.map((counter, idx) => (
           <motion.div
             key={counter.label}
             className={`bento-card bento-metric bento-metric-${idx}`}
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            custom={6 + idx}
+            variants={cardVariant}
+            initial="hidden"
+            whileInView="visible"
             viewport={{ once: true }}
-            transition={{ duration: 0.4, delay: 0.1 + idx * 0.05 }}
-            whileHover={{ scale: 1.02 }}
+            whileHover={{ scale: 1.03, y: -3 }}
           >
-            <p className="text-3xl font-extrabold text-[var(--accent-blue)]">
+            <p className="text-[clamp(22px,2.8vw,32px)] font-extrabold text-[var(--accent-blue)] leading-none">
               {counter.numericValue !== undefined ? (
                 <AnimatedCounter
                   value={counter.numericValue}
@@ -176,35 +158,68 @@ export function AboutSection() {
                 counter.value
               )}
             </p>
-            <p className="text-xs text-[var(--muted)] mt-1">{counter.label}</p>
+            <p className="text-[11px] text-[var(--muted)] mt-1.5 leading-tight">{counter.label}</p>
           </motion.div>
         ))}
       </div>
 
       <style jsx global>{`
+        /* ── Bento grid ── */
         .bento-grid {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
           grid-template-areas:
-            'name name journey journey'
-            'mindset profile profile craft'
-            'location metric1 metric2 metric3'
-            'location metric4 metric4 metric4';
+            'name     name     journey  journey'
+            'mindset  profile  profile  craft'
+            'location metric0  metric1  metric2'
+            'location metric3  metric3  metric3';
         }
+        @media (max-width: 1024px) {
+          .bento-grid {
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-areas:
+              'name    journey'
+              'mindset profile'
+              'craft   craft'
+              'location metric0'
+              'metric1 metric2'
+              'metric3 metric3';
+          }
+        }
+        @media (max-width: 600px) {
+          .bento-grid {
+            grid-template-columns: 1fr;
+            grid-template-areas:
+              'name'
+              'journey'
+              'profile'
+              'mindset'
+              'craft'
+              'location'
+              'metric0'
+              'metric1'
+              'metric2'
+              'metric3';
+          }
+        }
+
         .bento-card {
           min-width: 0;
           border: 1px solid var(--line);
-          border-radius: 12px;
+          border-radius: 13px;
           background: var(--panel);
-          backdrop-filter: blur(16px);
-          padding: 1.25rem;
-          transition: border-color 0.25s, box-shadow 0.25s;
+          backdrop-filter: blur(18px);
+          -webkit-backdrop-filter: blur(18px);
+          padding: 1.3rem;
+          transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
         }
         .bento-card:hover {
-          border-color: rgba(116, 167, 255, 0.25);
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+          border-color: rgba(116, 167, 255, 0.22);
+          box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+          background: var(--panel-strong);
         }
-        .bento-name { grid-area: name; }
+
+        .bento-name    { grid-area: name; }
         .bento-journey { grid-area: journey; }
         .bento-mindset { grid-area: mindset; }
         .bento-profile {
@@ -214,81 +229,81 @@ export function AboutSection() {
           align-items: center;
           justify-content: center;
           text-align: center;
-          background: radial-gradient(circle at 50% 30%, rgba(116,167,255,0.08), var(--panel));
+          background: radial-gradient(circle at 50% 35%, rgba(116,167,255,0.07), var(--panel));
         }
-        .bento-craft { grid-area: craft; }
+        .bento-craft   { grid-area: craft; }
         .bento-location {
           grid-area: location;
           background:
-            radial-gradient(circle at 80% 80%, rgba(91,224,173,0.06), transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(91,224,173,0.06), transparent 55%),
             var(--panel);
         }
-        .bento-metric { min-height: 90px; display: flex; flex-direction: column; justify-content: center; }
-        .bento-metric-0 { grid-area: metric1; }
-        .bento-metric-1 { grid-area: metric2; }
-        .bento-metric-2 { grid-area: metric3; }
-        .bento-metric-3 { grid-area: metric4; }
+        .bento-metric  { grid-area: auto; display: flex; flex-direction: column; justify-content: center; min-height: 88px; }
+        .bento-metric-0 { grid-area: metric0; }
+        .bento-metric-1 { grid-area: metric1; }
+        .bento-metric-2 { grid-area: metric2; }
+        .bento-metric-3 { grid-area: metric3; }
 
+        /* Journey pill */
         .journey-pill {
-          padding: 0.75rem 1rem;
+          padding: 0.65rem 0.9rem;
           border-radius: 10px;
           border: 1px solid var(--line);
-          background: rgba(255,255,255,0.02);
-          text-align: left;
-          cursor: default;
-          transition: all 0.25s;
-          min-width: 140px;
+          background: var(--surface-subtle);
+          color: var(--foreground);
+          cursor: pointer;
+          transition: all 0.22s;
+          min-width: 128px;
         }
-        .journey-pill-active {
-          border-color: var(--accent-blue);
-          background: rgba(116,167,255,0.08);
-          transform: scale(1.03);
+        .journey-pill[data-active="true"] {
+          border-color: var(--pill-color, var(--accent-blue));
+          background: color-mix(in srgb, var(--pill-color, var(--accent-blue)) 8%, transparent);
+          transform: scale(1.02);
         }
+        .journey-pill:hover:not([data-active="true"]) {
+          border-color: rgba(116,167,255,0.25);
+          background: var(--surface-subtle);
+        }
+
+        /* Profile ring */
         .profile-ring {
-          width: 120px;
-          height: 120px;
+          width: 108px;
+          height: 108px;
           border-radius: 50%;
-          border: 1px dashed rgba(255,255,255,0.15);
+          border: 1px dashed rgba(116,167,255,0.22);
           display: grid;
           place-items: center;
           animation: float 5s ease-in-out infinite;
         }
         .profile-initials {
-          width: 88px;
-          height: 88px;
+          width: 80px;
+          height: 80px;
           border-radius: 50%;
           display: grid;
           place-items: center;
-          font-size: 2rem;
+          font-size: 1.8rem;
           font-weight: 800;
-          color: #071018;
-          background: linear-gradient(135deg, #dce9ff, #7df1c3);
+          color: #03111e;
+          background: linear-gradient(135deg, #c8dbff, #6ef7c6);
+          letter-spacing: 0.05em;
+          box-shadow: 0 4px 20px rgba(116,167,255,0.22);
         }
+
+        /* Tech pill */
         .tech-pill {
           font-size: 11px;
           font-family: var(--font-mono);
-          padding: 4px 10px;
+          font-weight: 600;
+          padding: 3px 9px;
           border-radius: 6px;
-          border: 1px solid var(--line);
-          background: rgba(255,255,255,0.03);
+          border: 1px solid;
+          transition: opacity 0.2s, transform 0.2s;
         }
-        @media (max-width: 900px) {
-          .bento-grid {
-            grid-template-columns: 1fr 1fr;
-            grid-template-areas:
-              'name name'
-              'journey journey'
-              'profile profile'
-              'mindset craft'
-              'location location'
-              'metric1 metric2'
-              'metric3 metric4';
-          }
-        }
-        @media (max-width: 540px) {
-          .bento-grid { grid-template-columns: 1fr; grid-template-areas: unset; }
-          .bento-card { grid-area: unset !important; }
-        }
+        .tech-pill:hover { opacity: 0.8; transform: translateY(-1px); }
+
+        /* Hide scrollbar on journey strip */
+        .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+        .scrollbar-none::-webkit-scrollbar { display: none; }
       `}</style>
     </section>
   );
