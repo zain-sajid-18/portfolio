@@ -53,6 +53,7 @@ export interface Project {
   challenges?: string;
   github?: string;
   liveDemo?: string;
+  caseStudy?: string;
 }
 
 export interface TimelineEntry {
@@ -223,8 +224,7 @@ export const projects: Project[] = [
     category: 'AI-Powered Online Auction Platform',
     description:
       'An end-to-end AI-driven auction platform with a real-time bidding engine, OpenAI-powered product intelligence, and comprehensive role-based access control.',
-    image:
-      'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1100&q=80',
+    image: '/intellibid.png',
     tags: ['MERN', 'Socket.io', 'OpenAI API', 'MongoDB', 'JWT', 'React.js'],
     highlights: [
       'Real-time bidding engine via Socket.io — managing concurrent bids, bid-expiry countdowns, anti-sniping logic, and live leaderboard synchronization for hundreds of simultaneous users with zero data inconsistency.',
@@ -242,6 +242,8 @@ export const projects: Project[] = [
     ],
     challenges:
       'Maintaining zero data inconsistency under concurrent bidding load while keeping API response times under 100ms.',
+    github: 'https://github.com/zain-sajid-18/IntelliBid-AI-bidding-system',
+    liveDemo: 'https://intellibid-ai.vercel.app/',
   },
   {
     id: 'realtime-chat',
@@ -249,8 +251,7 @@ export const projects: Project[] = [
     category: 'Production-Grade Messaging System',
     description:
       'A full-featured messaging platform with persistent WebSocket connections, live interactions, and enterprise-grade security.',
-    image:
-      'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1100&q=80',
+    image: '/chattingsystem.png',
     tags: ['WebSockets', 'JWT', 'MongoDB', 'Node.js', 'bcrypt', 'React.js'],
     highlights: [
       'Persistent WebSocket connections with live typing indicators, user presence detection, read receipts, file sharing, and fully paginated chat history stored in MongoDB.',
@@ -266,6 +267,8 @@ export const projects: Project[] = [
     ],
     challenges:
       'Achieving sub-50ms message delivery latency while maintaining security with XSS-safe rendering across concurrent multi-room connections.',
+    github: 'https://github.com/zain-sajid-18/chatting-system',
+    liveDemo: 'https://chatting-system-umber.vercel.app/',
   },
   {
     id: 'ecommerce',
@@ -273,8 +276,7 @@ export const projects: Project[] = [
     category: 'Marketplace & Admin Analytics',
     description:
       'A full-featured e-commerce system with advanced search, order lifecycle management, and performance-optimized data access.',
-    image:
-      'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=1100&q=80',
+    image: '',
     tags: ['React', 'Node.js', 'MongoDB', 'Express', 'REST APIs'],
     highlights: [
       'Product catalogue with advanced search & filtering, cart and wishlist management, order lifecycle tracking, and role-based admin analytics dashboard.',
@@ -297,8 +299,7 @@ export const projects: Project[] = [
     category: 'Layered Backend Architecture',
     description:
       'A production-ready modular RESTful API with enterprise patterns, comprehensive validation, and team-ready documentation.',
-    image:
-      'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1100&q=80',
+    image: '',
     tags: ['Express', 'Joi', 'JWT', 'Rate Limiting', 'Postman'],
     highlights: [
       'Layered architecture (routes → controllers → services → models) with Joi input validation, centralized error handling, JWT middleware, and rate-limiting.',
@@ -412,14 +413,14 @@ export const testimonials: Testimonial[] = [];
 
 export const techGlobeItems = [
   { name: 'React', color: '#61DAFB' },
-  { name: 'Next.js', color: '#ffffff' },
+  { name: 'Next.js', color: '#888888' },
   { name: 'Node.js', color: '#339933' },
-  { name: 'Express', color: '#ffffff' },
+  { name: 'Express', color: '#888888' },
   { name: 'MongoDB', color: '#47A248' },
   { name: 'TypeScript', color: '#3178C6' },
   { name: 'JavaScript', color: '#F7DF1E' },
   { name: 'Python', color: '#3776AB' },
-  { name: 'Socket.io', color: '#ffffff' },
+  { name: 'Socket.io', color: '#888888' },
   { name: 'Git', color: '#F05032' },
   { name: 'Firebase', color: '#FFCA28' },
   { name: 'Docker', color: '#2496ED' },
