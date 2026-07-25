@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Sun, Moon, ArrowUpRight } from 'lucide-react';
+import { Menu, X, Sun, Moon, ArrowUpRight, Zap } from 'lucide-react';
 import { useTheme } from '@/app/_components/providers/theme-provider';
 import { navLinks, personalInfo } from '@/app/_lib/data';
 import { cn } from '@/app/_lib/utils';
@@ -28,162 +28,151 @@ export function Navbar({ introComplete = true }: NavbarProps) {
     const sectionIds = ['hero', ...navLinks.map((l) => l.href.replace('#', ''))];
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActiveSection(entry.target.id);
-        });
+        entries.forEach((e) => { if (e.isIntersecting) setActiveSection(e.target.id); });
       },
       { rootMargin: '-42% 0px -52% 0px', threshold: 0 }
     );
-    sectionIds.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
+    sectionIds.forEach((id) => { const el = document.getElementById(id); if (el) observer.observe(el); });
     return () => observer.disconnect();
   }, [introComplete]);
 
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 1024) setMenuOpen(false);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    const onResize = () => { if (window.innerWidth >= 1024) setMenuOpen(false); };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
   }, []);
 
-  // Lock body scroll when drawer is open
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [menuOpen]);
 
-  // Close on outside tap
   useEffect(() => {
     if (!menuOpen) return;
     const handler = (e: MouseEvent) => {
       const t = e.target as HTMLElement;
-      if (!t.closest('.navbar-mobile') && !t.closest('.navbar-menu-btn')) {
-        setMenuOpen(false);
-      }
+      if (!t.closest('#mobile-nav') && !t.closest('.navbar-menu-btn')) setMenuOpen(false);
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, [menuOpen]);
 
   return (
-    /* px-4 on mobile, slightly more on sm — but header never contributes to width overflow
-       because it's fixed and we use inset-x-0 */
-    <header className="fixed top-0 inset-x-0 z-50 px-4 sm:px-5 pt-3 sm:pt-4 pointer-events-none">
-
-      {/* ── Pill bar ── */}
-      <motion.div
-        className={cn('shell navbar-shell pointer-events-auto', scrolled && 'navbar-shell--scrolled')}
-        initial={{ y: -70, opacity: 0 }}
-        animate={introComplete ? { y: 0, opacity: 1 } : { y: -70, opacity: 0 }}
-        transition={{ duration: 0.72, delay: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
-      >
-        {/* Brand */}
-        <a
-          href="#hero"
-          className="navbar-brand"
-          aria-label={`${personalInfo.name} — back to top`}
+    <header className="fixed top-0 inset-x-0 z-50 pointer-events-none">
+      {/* ── Top bar ── */}
+      <div className="px-3 sm:px-4 pt-3">
+        <motion.div
+          className={cn('nav-bar pointer-events-auto', scrolled && 'nav-bar--scrolled')}
+          initial={{ y: -80, opacity: 0 }}
+          animate={introComplete ? { y: 0, opacity: 1 } : { y: -80, opacity: 0 }}
+          transition={{ duration: 0.68, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="navbar-mark">{personalInfo.initials}</span>
-          <span className="hidden sm:flex flex-col leading-tight">
-            <span className="text-[13px] font-bold tracking-tight">{personalInfo.firstName}</span>
-            <span className="text-[10px] font-mono text-[var(--soft)] uppercase tracking-widest">{personalInfo.lastName}</span>
-          </span>
-        </a>
-
-        {/* Desktop nav — hidden below lg */}
-        <nav className="navbar-dock hidden lg:flex" aria-label="Primary navigation">
-          {navLinks.map((link) => {
-            const id = link.href.replace('#', '');
-            const isActive = activeSection === id;
-            return (
-              <a
-                key={link.href}
-                href={link.href}
-                className={cn('navbar-link', isActive && 'navbar-link--active')}
-                aria-current={isActive ? 'page' : undefined}
-              >
-                <span className="relative z-10">{link.label}</span>
-                {isActive && (
-                  <motion.span
-                    layoutId="navbar-glow"
-                    className="navbar-link-glow"
-                    transition={{ type: 'spring', stiffness: 380, damping: 34 }}
-                  />
-                )}
-              </a>
-            );
-          })}
-        </nav>
-
-        {/* Actions */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
-          {/* Available badge — xl only */}
-          <span className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[var(--line)] bg-[var(--surface-subtle)] text-[11px] font-mono text-[var(--accent-green)]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-green)] animate-pulse" />
-            Available
-          </span>
-
-          {/* Theme toggle */}
-          <button
-            onClick={toggleTheme}
-            className="navbar-icon-btn"
-            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-          >
-            <motion.span
-              key={theme}
-              initial={{ rotate: -30, opacity: 0, scale: 0.7 }}
-              animate={{ rotate: 0, opacity: 1, scale: 1 }}
-              transition={{ duration: 0.28 }}
-            >
-              {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
-            </motion.span>
-          </button>
-
-          {/* Hire Me — md+ */}
-          <a href={`mailto:${personalInfo.email}`} className="navbar-cta hidden md:inline-flex">
-            Hire Me <ArrowUpRight size={12} />
+          {/* ── Brand ── */}
+          <a href="#hero" className="nav-brand" aria-label="Back to top">
+            <span className="nav-logo">
+              <span className="nav-logo-text">{personalInfo.initials}</span>
+              <span className="nav-logo-ring" />
+            </span>
+            <span className="nav-brand-name">
+              <span className="nav-brand-first">{personalInfo.firstName}</span>
+              <span className="nav-brand-last">{personalInfo.lastName}</span>
+            </span>
           </a>
 
-          {/* Hamburger — below lg */}
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="navbar-icon-btn navbar-menu-btn lg:hidden"
-            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={menuOpen}
-            aria-controls="mobile-nav"
-          >
-            <AnimatePresence mode="wait" initial={false}>
+          {/* ── Desktop links ── */}
+          <nav className="nav-links hidden lg:flex" aria-label="Primary navigation">
+            {navLinks.map((link) => {
+              const id = link.href.replace('#', '');
+              const isActive = activeSection === id;
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className={cn('nav-link', isActive && 'nav-link--active')}
+                  aria-current={isActive ? 'page' : undefined}
+                >
+                  {isActive && (
+                    <motion.span
+                      layoutId="nav-pill"
+                      className="nav-link-pill"
+                      transition={{ type: 'spring', stiffness: 400, damping: 36 }}
+                    />
+                  )}
+                  <span className="relative z-10">{link.label}</span>
+                </a>
+              );
+            })}
+          </nav>
+
+          {/* ── Actions ── */}
+          <div className="nav-actions">
+            {/* Available badge — lg+ only */}
+            <span className="nav-badge hidden lg:flex">
+              <span className="nav-badge-dot" />
+              Open to work
+            </span>
+
+            {/* Theme */}
+            <button onClick={toggleTheme} className="nav-icon-btn" aria-label="Toggle theme">
               <motion.span
-                key={menuOpen ? 'close' : 'open'}
-                initial={{ rotate: -90, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                exit={{ rotate: 90, opacity: 0 }}
-                transition={{ duration: 0.18 }}
+                key={theme}
+                initial={{ rotate: -30, opacity: 0, scale: 0.6 }}
+                animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                transition={{ duration: 0.25 }}
+                style={{ display: 'flex' }}
               >
-                {menuOpen ? <X size={17} /> : <Menu size={17} />}
+                {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
               </motion.span>
-            </AnimatePresence>
-          </button>
-        </div>
-      </motion.div>
+            </button>
+
+            {/* Hire Me — sm+ */}
+            <a href={`mailto:${personalInfo.email}`} className="nav-cta hidden sm:inline-flex">
+              <Zap size={12} />
+              Hire Me
+            </a>
+
+            {/* Hamburger — below lg */}
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="nav-icon-btn navbar-menu-btn lg:hidden"
+              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={menuOpen}
+              aria-controls="mobile-nav"
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.span
+                  key={menuOpen ? 'x' : 'menu'}
+                  initial={{ rotate: -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }}
+                  transition={{ duration: 0.16 }}
+                  style={{ display: 'flex' }}
+                >
+                  {menuOpen ? <X size={16} /> : <Menu size={16} />}
+                </motion.span>
+              </AnimatePresence>
+            </button>
+          </div>
+        </motion.div>
+      </div>
 
       {/* ── Mobile drawer ── */}
       <AnimatePresence>
         {menuOpen && (
-          <motion.nav
+          <motion.div
             id="mobile-nav"
-            className="shell mt-2 navbar-mobile pointer-events-auto"
-            style={{ maxHeight: 'calc(100svh - 80px)', overflowY: 'auto' }}
-            initial={{ opacity: 0, y: -10, scale: 0.97 }}
+            className="nav-drawer pointer-events-auto mx-3 mt-2"
+            initial={{ opacity: 0, y: -12, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.97 }}
-            transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+            exit={{ opacity: 0, y: -8, scale: 0.97 }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
             aria-label="Mobile navigation"
           >
-            <div className="grid gap-0.5">
+            {/* Section label */}
+            <p className="nav-drawer-label">Navigation</p>
+
+            {/* Links */}
+            <div className="grid gap-1">
               {navLinks.map((link, i) => {
                 const id = link.href.replace('#', '');
                 const isActive = activeSection === id;
@@ -191,44 +180,39 @@ export function Navbar({ introComplete = true }: NavbarProps) {
                   <motion.a
                     key={link.href}
                     href={link.href}
-                    className={cn('navbar-mobile-link', isActive && 'navbar-mobile-link--active')}
+                    className={cn('nav-drawer-link', isActive && 'nav-drawer-link--active')}
                     onClick={() => setMenuOpen(false)}
-                    initial={{ opacity: 0, x: -8 }}
+                    initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.035 }}
+                    transition={{ delay: i * 0.04 }}
                   >
-                    <span className="text-[10px] font-mono mr-3 opacity-40 tabular-nums" aria-hidden>
-                      {String(i + 1).padStart(2, '0')}
-                    </span>
-                    {link.label}
-                    {isActive && (
-                      <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[var(--accent-green)]" />
-                    )}
+                    <span className="nav-drawer-num">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="flex-1">{link.label}</span>
+                    {isActive && <span className="nav-drawer-active-dot" />}
                   </motion.a>
                 );
               })}
             </div>
 
-            {/* Bottom row — hire + theme */}
-            <div className="mt-3 pt-3 border-t border-[var(--line)] flex gap-2">
+            {/* Bottom actions */}
+            <div className="nav-drawer-footer">
               <a
                 href={`mailto:${personalInfo.email}`}
                 className="btn-primary flex-1 justify-center text-[13px]"
-                style={{ minHeight: 44 }}
                 onClick={() => setMenuOpen(false)}
               >
-                Hire Me <ArrowUpRight size={13} />
+                <Zap size={13} /> Hire Me
               </a>
               <button
                 onClick={() => { toggleTheme(); setMenuOpen(false); }}
-                className="navbar-icon-btn shrink-0"
+                className="nav-icon-btn"
                 aria-label="Toggle theme"
                 style={{ width: 44, height: 44 }}
               >
                 {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
               </button>
             </div>
-          </motion.nav>
+          </motion.div>
         )}
       </AnimatePresence>
     </header>

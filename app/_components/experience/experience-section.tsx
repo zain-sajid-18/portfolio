@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, Award, Code, Users } from 'lucide-react';
-import { timeline } from '@/app/_lib/data';
+import { BookOpen, Award, Code, Users, Download, GitFork } from 'lucide-react';
+import { timeline, personalInfo } from '@/app/_lib/data';
 import { ScrollReveal } from '@/app/_components/ui/scroll-reveal';
 import { SectionHeader } from '@/app/_components/ui/section-header';
 
@@ -45,8 +45,8 @@ export function ExperienceSection() {
         description="A timeline of software engineering education, capstone projects, certifications, and professional involvement."
       />
 
-      {/* Filter pills */}
-      <div className="flex flex-wrap gap-2 mt-7 sm:mt-8 justify-center">
+      {/* Filter pills — mt-2 because SectionHeader already provides bottom spacing */}
+      <div className="flex flex-wrap gap-2 mt-2 justify-center">
         {FILTERS.map(({ value, label }) => {
           const isActive = filter === value;
           return (
@@ -141,6 +141,34 @@ export function ExperienceSection() {
               );
             })}
           </AnimatePresence>
+        </div>
+      </div>
+
+      {/* ── CTA strip ── */}
+      <div className="mt-14 flex flex-col sm:flex-row items-center justify-center gap-3 text-center">
+        <p className="text-[13px] text-[var(--muted)] font-mono">
+          Want the full picture?
+        </p>
+        <div className="flex flex-wrap gap-2 justify-center">
+          <a
+            href={personalInfo.resumePath}
+            download
+            className="exp-cta-btn exp-cta-btn--primary"
+            aria-label="Download resume PDF"
+          >
+            <Download size={14} />
+            Download Résumé
+          </a>
+          <a
+            href={personalInfo.socials.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="exp-cta-btn exp-cta-btn--ghost"
+            aria-label="View GitHub profile"
+          >
+            <GitFork size={14} />
+            GitHub Profile
+          </a>
         </div>
       </div>
 

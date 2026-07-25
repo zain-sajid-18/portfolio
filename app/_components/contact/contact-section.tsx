@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent, type ChangeEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Phone, MapPin, Send, Link, FileCode, CheckCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Link, FileCode, CheckCircle, Download } from 'lucide-react';
 import { personalInfo } from '@/app/_lib/data';
 import { ScrollReveal } from '@/app/_components/ui/scroll-reveal';
 import { SectionHeader } from '@/app/_components/ui/section-header';
@@ -145,6 +145,18 @@ export function ContactSection() {
                 <FileCode size={16} /><span className="text-xs font-mono">GitHub</span>
               </a>
             </div>
+
+            {/* Resume download — primary CTA for recruiters */}
+            <a
+              href={personalInfo.resumePath}
+              download
+              className="contact-resume-btn"
+              aria-label="Download resume PDF"
+            >
+              <Download size={15} />
+              <span>Download Résumé</span>
+              <span className="contact-resume-ext">PDF</span>
+            </a>
           </div>
         </ScrollReveal>
 
@@ -226,6 +238,65 @@ export function ContactSection() {
         [data-theme="light"] .fl-input, [data-theme="light"] .fl-textarea { color: var(--foreground); }
         [data-theme="light"] .fl-input::placeholder, [data-theme="light"] .fl-textarea::placeholder { color: var(--soft); }
         .btn-submitted { background: linear-gradient(135deg, var(--accent-green), #2cb78a); }
+
+        /* Resume download button */
+        .contact-resume-btn {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 13px 18px;
+          border-radius: 12px;
+          border: 1px dashed rgba(116,167,255,0.35);
+          background: rgba(116,167,255,0.04);
+          color: var(--accent-blue);
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: border-color 0.22s, background 0.22s, transform 0.22s, box-shadow 0.22s;
+          text-decoration: none;
+          position: relative;
+          overflow: hidden;
+        }
+        .contact-resume-btn::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(105deg, transparent 40%, rgba(116,167,255,0.08) 50%, transparent 60%);
+          transform: translateX(-100%);
+          transition: transform 0.55s;
+        }
+        .contact-resume-btn:hover::before { transform: translateX(100%); }
+        .contact-resume-btn:hover {
+          border-color: var(--accent-blue);
+          background: rgba(116,167,255,0.08);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 22px rgba(116,167,255,0.14);
+        }
+        .contact-resume-ext {
+          margin-left: auto;
+          font-size: 10px;
+          font-family: var(--font-mono);
+          font-weight: 700;
+          letter-spacing: 0.1em;
+          padding: 2px 7px;
+          border-radius: 5px;
+          background: rgba(116,167,255,0.12);
+          border: 1px solid rgba(116,167,255,0.25);
+          color: var(--accent-blue);
+        }
+        [data-theme="light"] .contact-resume-btn {
+          border-color: rgba(29,78,216,0.3);
+          background: rgba(29,78,216,0.04);
+          color: var(--accent-blue);
+        }
+        [data-theme="light"] .contact-resume-btn:hover {
+          border-color: var(--accent-blue);
+          background: rgba(29,78,216,0.08);
+        }
+        [data-theme="light"] .contact-resume-ext {
+          background: rgba(29,78,216,0.1);
+          border-color: rgba(29,78,216,0.2);
+        }
       `}</style>
     </section>
   );

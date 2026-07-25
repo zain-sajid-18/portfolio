@@ -130,7 +130,15 @@ export function AboutSection() {
         </motion.div>
 
         {/* Metrics */}
-        {aboutCounters.map((counter, idx) => (
+        {aboutCounters.map((counter, idx) => {
+          const metricAccents = [
+            'var(--accent-blue)',
+            'var(--accent-green)',
+            'var(--accent-amber)',
+            'var(--accent-rose)',
+          ];
+          const accentColor = metricAccents[idx % metricAccents.length];
+          return (
           <motion.div
             key={counter.label}
             className={`bento-card bento-metric bento-metric-${idx}`}
@@ -139,9 +147,12 @@ export function AboutSection() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            whileHover={{ scale: 1.03, y: -2 }}
+            whileHover={{ scale: 1.04, y: -3 }}
+            style={{ '--metric-color': accentColor } as React.CSSProperties}
           >
-            <p className="text-[clamp(20px,2.8vw,30px)] font-extrabold text-[var(--accent-blue)] leading-none">
+            {/* top accent strip */}
+            <div className="bento-metric-strip" />
+            <p className="bento-metric-value">
               {counter.numericValue !== undefined ? (
                 <AnimatedCounter
                   value={counter.numericValue}
@@ -152,7 +163,8 @@ export function AboutSection() {
             </p>
             <p className="text-[11px] text-[var(--muted)] mt-1.5 leading-tight">{counter.label}</p>
           </motion.div>
-        ))}
+          );
+        })}
       </div>
 
       <style jsx global>{`
@@ -230,11 +242,33 @@ export function AboutSection() {
           grid-area: location;
           background: radial-gradient(circle at 80% 80%, rgba(91,224,173,0.06), transparent 55%), var(--panel);
         }
-        .bento-metric   { grid-area: auto; display: flex; flex-direction: column; justify-content: center; min-height: 80px; }
+        .bento-metric   { grid-area: auto; display: flex; flex-direction: column; justify-content: center; min-height: 80px; position: relative; overflow: hidden; }
         .bento-metric-0 { grid-area: metric0; }
         .bento-metric-1 { grid-area: metric1; }
         .bento-metric-2 { grid-area: metric2; }
         .bento-metric-3 { grid-area: metric3; }
+
+        /* coloured top strip on each metric card */
+        .bento-metric-strip {
+          position: absolute;
+          inset-x: 0;
+          top: 0;
+          height: 2px;
+          background: var(--metric-color, var(--accent-blue));
+          opacity: 0.7;
+          border-radius: 13px 13px 0 0;
+          transition: opacity 0.25s;
+        }
+        .bento-metric:hover .bento-metric-strip { opacity: 1; }
+
+        /* metric number uses the card's own colour */
+        .bento-metric-value {
+          font-size: clamp(20px, 2.8vw, 30px);
+          font-weight: 800;
+          line-height: 1;
+          color: var(--metric-color, var(--accent-blue));
+          transition: color 0.2s;
+        }
 
         /* Journey pill — no min-width, let content size it */
         .journey-pill {

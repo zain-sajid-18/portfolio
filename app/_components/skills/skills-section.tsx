@@ -114,14 +114,35 @@ export function SkillsSection() {
           border: 1px solid var(--line);
           background: var(--panel);
           backdrop-filter: blur(16px);
-          transition: border-color 0.28s, box-shadow 0.28s, background 0.28s;
+          -webkit-backdrop-filter: blur(16px);
+          transition: border-color 0.28s, box-shadow 0.28s, background 0.28s, transform 0.28s;
           overflow: hidden;
+          position: relative;
+        }
+        /* top accent strip that grows in on hover */
+        .skill-principle-card::before {
+          content: '';
+          position: absolute;
+          inset-x: 0;
+          top: 0;
+          height: 2px;
+          background: linear-gradient(90deg, var(--card-color, var(--accent-blue)), transparent);
+          transform: scaleX(0);
+          transform-origin: left;
+          transition: transform 0.38s ease;
+          border-radius: 14px 14px 0 0;
+        }
+        .skill-principle-card:hover::before {
+          transform: scaleX(1);
         }
         .skill-principle-card:hover {
-          border-color: rgba(116,167,255,0.22);
+          border-color: color-mix(in srgb, var(--card-color, var(--accent-blue)) 35%, transparent);
           box-shadow: 0 12px 40px var(--card-glow, rgba(116,167,255,0.1));
           background: var(--panel-strong);
+          transform: translateY(-3px);
         }
+        [data-theme="light"] .skill-principle-card { background: rgba(255,255,255,0.85); }
+        [data-theme="light"] .skill-principle-card:hover { background: #ffffff; }
       `}</style>
     </section>
   );

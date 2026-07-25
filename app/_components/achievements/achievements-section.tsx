@@ -20,7 +20,7 @@ export function AchievementsSection() {
         description="Academic achievements, professional certificates, and developer community participation."
       />
 
-      <div className="grid gap-5 mt-12 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {achievements.map((item, idx) => {
           const accent = accentColors[idx % accentColors.length];
           return (
