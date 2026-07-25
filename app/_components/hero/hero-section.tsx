@@ -32,26 +32,11 @@ export function HeroSection() {
   return (
     <section
       id="hero"
-      className="shell relative min-h-[100svh] grid items-center gap-10 lg:gap-16 pt-28 pb-16 hero-grid"
+      className="shell relative min-h-[100svh] flex flex-col justify-center gap-8 pt-24 sm:pt-28 pb-16 lg:grid lg:items-center lg:gap-16"
+      style={{ gridTemplateColumns: 'minmax(0,1fr) minmax(0,0.95fr)' }}
     >
-      {/* ── Text — always first on mobile ── */}
-      <motion.div
-        className="relative min-h-[300px] md:min-h-[420px] lg:min-h-[580px] order-1 lg:order-none w-full"
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1.1, ease: [0.25, 0.1, 0.25, 1] }}
-      >
-        <div className="hero-globe-stage absolute inset-0 min-h-[300px] md:min-h-[420px] lg:min-h-[580px]">
-          <HeroCanvas />
-          <div className="hero-globe-vignette" />
-          <div className="absolute bottom-5 left-5 flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--line)] bg-[var(--panel)] backdrop-blur-md text-xs font-mono text-[var(--muted)]">
-            <MapPin size={11} className="text-[var(--accent-rose)]" />
-            Lahore, PK
-          </div>
-        </div>
-      </motion.div>
-
-      <div className="order-2 lg:order-none flex flex-col justify-center">
+      {/* ── Text — always first, even on mobile ── */}
+      <div className="order-1 flex flex-col justify-center">
 
         <motion.div className="flex items-center gap-2 mb-5" custom={0} initial="hidden" animate="visible" variants={fadeUp}>
           <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--accent-green)]/30 bg-[var(--accent-green)]/8 text-[var(--accent-green)] text-[11px] font-mono font-semibold tracking-wide">
@@ -107,10 +92,24 @@ export function HeroSection() {
         </motion.div>
       </div>
 
+      {/* ── Globe — second on mobile, first column on lg ── */}
+      <motion.div
+        className="order-2 relative w-full h-[280px] sm:h-[360px] md:h-[440px] lg:h-auto lg:min-h-[560px]"
+        initial={{ opacity: 0, scale: 0.88 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1.1, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
+      >
+        <div className="hero-globe-stage absolute inset-0">
+          <HeroCanvas />
+          <div className="hero-globe-vignette" />
+          <div className="absolute bottom-4 left-4 flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--line)] bg-[var(--panel)] backdrop-blur-md text-xs font-mono text-[var(--muted)]">
+            <MapPin size={11} className="text-[var(--accent-rose)]" />
+            Lahore, PK
+          </div>
+        </div>
+      </motion.div>
+
       <style jsx global>{`
-        .hero-grid {
-          grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-        }
         .spec-pill {
           padding: 0.3rem 0.8rem;
           border-radius: 999px;
