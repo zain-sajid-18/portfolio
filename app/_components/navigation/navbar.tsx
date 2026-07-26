@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Sun, Moon, ArrowUpRight, Zap } from 'lucide-react';
+import { Menu, X, Sun, Moon, Zap } from 'lucide-react';
 import { useTheme } from '@/app/_components/providers/theme-provider';
 import { navLinks, personalInfo } from '@/app/_lib/data';
 import { cn } from '@/app/_lib/utils';
@@ -37,6 +37,10 @@ export function Navbar({ introComplete = true }: NavbarProps) {
   }, [introComplete]);
 
   useEffect(() => {
+    const initialClose = () => {
+      if (typeof window !== 'undefined' && window.innerWidth >= 1024) setMenuOpen(false);
+    };
+    queueMicrotask(initialClose);
     const onResize = () => { if (window.innerWidth >= 1024) setMenuOpen(false); };
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
@@ -156,18 +160,19 @@ export function Navbar({ introComplete = true }: NavbarProps) {
         </motion.div>
       </div>
 
-      {/* ── Mobile drawer ── */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            id="mobile-nav"
-            className="nav-drawer pointer-events-auto mx-3 mt-2"
-            initial={{ opacity: 0, y: -12, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -8, scale: 0.97 }}
-            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-            aria-label="Mobile navigation"
-          >
+      {/* ── Mobile drawer — NEVER visible on lg+ screens ── */}
+      <div className="lg:hidden">
+        <AnimatePresence>
+          {menuOpen && (
+            <motion.div
+              id="mobile-nav"
+              className="nav-drawer pointer-events-auto mx-3 mt-2"
+              initial={{ opacity: 0, y: -12, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -8, scale: 0.97 }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              aria-label="Mobile navigation"
+            >
             {/* Section label */}
             <p className="nav-drawer-label">Navigation</p>
 
@@ -212,9 +217,10 @@ export function Navbar({ introComplete = true }: NavbarProps) {
                 {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
               </button>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </header>
   );
 }

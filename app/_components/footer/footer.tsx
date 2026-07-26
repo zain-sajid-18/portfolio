@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowUp, Link, FileCode, Mail, Heart } from 'lucide-react';
+import { ArrowUp, Link, FileCode, Mail } from 'lucide-react';
 import { personalInfo } from '@/app/_lib/data';
 
 export function Footer() {
@@ -48,10 +48,10 @@ export function Footer() {
               </span>
             </div>
 
-            {/* Scroll to top — visible & labelled */}
+            {/* Scroll to top — MOBILE ONLY (hidden on lg+ desktop; desktop has navbar already and scrollbar for navigation) */}
             <button
               onClick={handleScrollTop}
-              className="footer-scroll-top"
+              className="footer-scroll-top lg:hidden"
               aria-label="Back to top"
             >
               <ArrowUp size={14} />
