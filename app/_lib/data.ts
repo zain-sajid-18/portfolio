@@ -138,8 +138,8 @@ export const heroMetrics: Metric[] = [
 // ─── About Counters ──────────────────────────
 
 export const aboutCounters: Metric[] = [
-  { value: '4+', numericValue: 3, suffix: '+', label: 'Years of Learning' },
-  { value: '10+', numericValue: 4, suffix: '+', label: 'Projects Built' },
+  { value: '4+', numericValue: 4, suffix: '+', label: 'Years of Learning' },
+  { value: '10+', numericValue: 10, suffix: '+', label: 'Projects Built' },
   { value: '18+', numericValue: 18, suffix: '+', label: 'Technologies' },
   { value: '3.28', numericValue: 3.28, label: 'CGPA/ 4.0' },
 ];
@@ -417,9 +417,18 @@ export const achievements: Achievement[] = [
   },
 ];
 
-// ─── Testimonials (placeholder architecture) ─
+// ─── Testimonials (peer + academic social proof) ─
 
-export const testimonials: Testimonial[] = [];
+export const testimonials: Testimonial[] = [
+  {
+    id: '',
+    name: '',
+    role: '',
+    company: '',
+    content:
+      'IntelliBid - is my flagship AI-powered auction and bidding platform, built to combine real-time systems, artificial intelligence, and secure transaction workflows into a complete digital auction experience. The platform features live concurrent bidding, AI-powered recommendations, AI-assisted product content generation, a RAG-based chatbot, secure authentication, email verification, and escrow-based payment workflows. Built with the MERN stack and modern AI technologies, IntelliBid showcases my ability to design and develop complex, production-oriented full-stack systems.',
+  }
+];
 
 // ─── Tech Globe Icons ────────────────────────
 
