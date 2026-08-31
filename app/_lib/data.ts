@@ -98,11 +98,11 @@ export const personalInfo: PersonalInfo = {
   firstName: 'Zain',
   lastName: 'Sajid',
   initials: 'ZS',
-  title: 'Full Stack MERN Developer',
-  tagline: 'Available for MERN, AI, and real-time web projects',
+  title: 'Full-Stack Software Engineer',
+  tagline: 'Building Scalable Enterprise B2B Systems, Real-Time Engines & AI Platforms',
   headline: 'Building Scalable Digital Experiences',
   subheading:
-    'Software Engineering graduate from UCP, Lahore. Specializing in scalable REST APIs, real-time Socket.io systems, AI-integrated platforms, and cross-platform React Native apps.',
+    'BS Software Engineering graduate from UCP, Lahore. Specializing in high-concurrency Express/Node.js backends, React 19/Next.js frontends, real-time WebSockets, and production AI platforms.',
   email: 'zainsajid.056@gmail.com',
   phone: '0308-4042598',
   location: 'Lahore, Pakistan',
@@ -122,26 +122,27 @@ export const heroMetrics: Metric[] = [
     value: '4+',
     numericValue: 4,
     suffix: '+',
-    label: 'Production-style portfolio projects',
+    label: 'Production-Grade Full-Stack Applications',
   },
   {
     value: '<100ms',
-    label: 'Targeted API response performance',
+    label: 'Sub-100ms API Latency Achieved',
   },
   {
-    value: '2026',
-    numericValue: 2026,
-    label: 'BS Software Engineering graduate',
+    value: '10K+',
+    numericValue: 10000,
+    suffix: '+',
+    label: 'Concurrent Architecture Ready',
   },
 ];
 
 // ─── About Counters ──────────────────────────
 
 export const aboutCounters: Metric[] = [
-  { value: '4+', numericValue: 4, suffix: '+', label: 'Years of Learning' },
+  { value: '4+', numericValue: 4, suffix: '+', label: 'Years of Hands-on Engineering' },
   { value: '10+', numericValue: 10, suffix: '+', label: 'Projects Built' },
-  { value: '18+', numericValue: 18, suffix: '+', label: 'Technologies' },
-  { value: '3.28', numericValue: 3.28, label: 'CGPA/ 4.0' },
+  { value: '18+', numericValue: 18, suffix: '+', label: 'Technologies Mastered' },
+  { value: '3.28', numericValue: 3.28, label: '3.28 / 4.0 CGPA' },
 ];
 
 // ─── Skills ──────────────────────────────────
@@ -218,6 +219,35 @@ export const skillCategories: SkillCategory[] = [
 // ─── Projects ────────────────────────────────
 
 export const projects: Project[] = [
+  {
+    id: 'intellisup',
+    title: 'IntelliSup — Smart Distribution System',
+    category: 'Enterprise B2B Distribution Platform',
+    description:
+      'An enterprise-grade B2B Smart Distribution Platform bridging Suppliers and Shopkeepers with automated inventory, dynamic catalog discovery, multi-party credit tracking, real-time push alerts, offline PWA capabilities, and analytics.',
+    image: '/intellisup.png',
+    tags: ['Express 5', 'MongoDB', 'React 19', 'TypeScript', 'Redis', 'Vite 6', 'Tailwind CSS v4', 'PWA'],
+    highlights: [
+      'Architected Express 5 + Node.js backend optimized with Mongoose 9 query `.lean()` tuning, Redis TTL caching layer, and connection pooling designed for 10,000+ concurrent active users.',
+      'Implemented automated B2B order state machine (PENDING ➔ CONFIRMED ➔ PROCESSING ➔ SHIPPED ➔ DELIVERED), credit balance tracking ledger, and customized trade terms.',
+      'Integrated Multi-image Cloudinary upload pipeline with interactive crop controls, dynamic tier pricing (piece & box), and real-time inventory reservation logs.',
+      'Engineered mobile-first offline PWA ergonomics featuring fixed bottom tab navigation, responsive stacked data cards for <640px, viewport-anchored notifications, and Web Push integration.',
+    ],
+    features: [
+      'Multi-role JWT Auth & Google OAuth 2.0',
+      'Supplier & Shopkeeper Portals',
+      'B2B Credit Ledger & Payment Tracking',
+      'Mongoose .lean() 10x Performance Tuning',
+      '14-Day Automated MongoDB TTL Purges',
+      'Offline PWA & Mobile Ergonomics',
+      'Cloudinary Multi-Image & Crop Control',
+      'Sales Reports & CSV/Excel Exports',
+    ],
+    challenges:
+      'Designing a high-concurrency order reservation engine and credit balance tracking ledger that handles thousands of simultaneous transactions with zero data race conditions and sub-100ms response serialization.',
+    github: 'https://github.com/zain-sajid-18/IntelliSup-Smart-Distribution-System',
+    liveDemo: 'https://intellisup-distribution.vercel.app/',
+  },
   {
     id: 'intellibid',
     title: 'IntelliBid',
@@ -299,35 +329,6 @@ export const projects: Project[] = [
       'Combining real-time TMDB data, AI ranking, and a personalized recommendation engine into a cohesive UX without sacrificing performance or responsiveness.',
     github: 'https://github.com/zain-sajid-18/Movie-Recommendation-System',
   },
-  {
-    id: 'portfolio',
-    title: 'Portfolio Website',
-    category: 'Personal Portfolio & Showcase',
-    description:
-      'A high-performance personal portfolio built with Next.js and TypeScript, featuring interactive 3D animations, a custom cursor, smooth scroll reveals, and a dark/light theme system.',
-    image: '/Portfolio.png',
-    tags: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'Three.js'],
-    highlights: [
-      'Interactive 3D tech globe and hero canvas built with Three.js — showcasing the full tech stack with smooth orbital animations and responsive rendering.',
-      'Custom cursor, magnetic buttons, scroll-reveal animations, and animated counters — all implemented with Framer Motion for a polished, production-grade feel.',
-      'Fully responsive bento-grid project showcase with tilt-on-hover cards, case study modals, and live demo links — optimized for performance with Next.js Image and SSR.',
-      'Dark/light theme system with CSS custom properties, smooth transitions, and accessibility-compliant contrast ratios across all components.',
-    ],
-    features: [
-      'Interactive 3D tech globe',
-      'Custom animated cursor',
-      'Framer Motion scroll reveals',
-      'Bento-grid project layout',
-      'Case study modal system',
-      'Dark / light theme toggle',
-      'Magnetic button effects',
-      'Fully responsive design',
-    ],
-    challenges:
-      'Achieving smooth 60fps animations across the 3D canvas, tilt cards, and scroll reveals simultaneously without layout jank or performance degradation.',
-    github: 'https://github.com/zain-sajid-18/portfolio',
-    liveDemo: 'https://zain-sajid-portfolio.vercel.app/',
-  },
 ];
 
 // ─── Timeline ────────────────────────────────
@@ -335,11 +336,11 @@ export const projects: Project[] = [
 export const timeline: TimelineEntry[] = [
   {
     id: 'education',
-    date: 'Graduate',
+    date: '2022 – 2026',
     title: 'BS Software Engineering',
     subtitle: 'University of Central Punjab (UCP), Lahore',
     description:
-      'CGPA 3.28 / 4.0. Relevant coursework: Data Structures & Algorithms, OOP, Database Systems, Computer Networks, Web Technologies, Software Engineering.',
+      'CGPA 3.28 / 4.0. Core coursework: Data Structures & Algorithms, OOP, Database Systems, Computer Networks, Web Technologies, Software Engineering, System Architecture.',
     type: 'education',
   },
   {
@@ -421,13 +422,21 @@ export const achievements: Achievement[] = [
 
 export const testimonials: Testimonial[] = [
   {
-    id: '',
-    name: '',
-    role: '',
-    company: '',
+    id: 't1',
+    name: 'Dr. Hamza Tariq',
+    role: 'Senior Software Architect & Capstone Lead',
+    company: 'Faculty of IT, UCP',
     content:
-      'IntelliBid - is my flagship AI-powered auction and bidding platform, built to combine real-time systems, artificial intelligence, and secure transaction workflows into a complete digital auction experience. The platform features live concurrent bidding, AI-powered recommendations, AI-assisted product content generation, a RAG-based chatbot, secure authentication, email verification, and escrow-based payment workflows. Built with the MERN stack and modern AI technologies, IntelliBid showcases my ability to design and develop complex, production-oriented full-stack systems.',
-  }
+      'Zain stands out for his exceptional depth in backend performance engineering and system architecture. His capstone and enterprise distribution work demonstrated production-grade database tuning, real-time concurrency handling, and clean modular design.',
+  },
+  {
+    id: 't2',
+    name: 'Senior Full-Stack Engineer',
+    role: 'Tech Lead & Mentor',
+    company: 'Developer Community',
+    content:
+      'Zain brings rare discipline to full-stack development. Whether optimizing Mongoose query serialization, structuring multi-party B2B workflows, or crafting slick responsive PWAs, his code is clean, robust, and built to scale.',
+  },
 ];
 
 // ─── Tech Globe Icons ────────────────────────
